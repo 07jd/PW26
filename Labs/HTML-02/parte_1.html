@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscrição para Evento</title>
+    <link rel="icon" href="logo_exemplo.avif" type="image"></link>
+</head>
+
+<body>
+    <header>
+        <h1>Exemplo Org</h1>
+        <img src="logo_exemplo.avif" alt="Logo da organização" width="75">
+    </header>
+
+    <nav>
+        <a href="">Início</a>
+        <a href="">Programação</a>
+        <a href="">Localização</a>
+    </nav>
+    <br>
+    
+    <main>
+        <div>
+            <form action="">
+                <label for="nome">Nome Completo:</label>
+                <input type="text" name="nome" id="nome" minlength="3" maxlength="50" required>
+                <br>  
+                <label for="email">Email:</label>
+                <input type="email" name="email" id="email" required>
+                <br>
+                <label for="telefone">Telefone:</label>
+                <input type="tel" name="telefone" id="telefone" required>
+                <br>
+                <label for="pwb">Página pessoal:</label>
+                <input type="url" name="pwb" id="pwb">
+                <br>
+                <label for="codigo_postal">Codigo postal:</label>
+                <input type="pattern" name="codigo_postal" id="codigo_postal" pattern="^\d{4}-\d{3}$" placeholder="1234-567" required>
+                <br>
+                <label for="tipo_ingresso">Tipo de ingresso:</label>
+                <select name="tipo_ingresso" id="tipo_ingresso" required>
+                    <option value="padrao">Padrão</option>
+                    <option value="padrao_melhorado">Padrão+</option>
+                    <option value="vip">VIP</option>
+                </select>
+                <br>
+                <label for="foto">Foto:</label>
+                <input type="file" name="foto" id="foto">
+                <br>
+                <label for="atc">Aceitar Termos e Condições</label>
+                <input type="checkbox" name="atc" id="atc" required>
+                <br>
+                <input type="submit" value="Enviar Inscrição">
+
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p>2026 Copyright ExemploORG</p>
+        <p>Contacte-nos em: +351 123 456 789</p>
+    </footer>
+</body>
+</html>
