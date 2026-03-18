@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Armazenamento no Browser</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+
+<body>
+    
+    <div class="parte1">
+        <div class="title">
+            <h1>[Parte 1] Teste de Armazenamento</h1>
+        </div>
+
+        <div class="body">
+            <input type="text" name="nome" id="nome" placeholder="Introduz o teu nome">    
+            <button onclick="guardarLocal()">Guardar LocalStorage</button>
+            <button onclick="guardarSession()">Guardar SessionStorage</button>
+            <button onclick="lerDados()">Ler dados</button>  
+        </div>
+    </div>
+
+    <div class="parte2">
+        <div class="title">
+            <h1>[Parte 2..5] IndexdedDB</h1>
+        </div>
+
+        <div class="body">
+            <div class="insercao_dados">
+                <h1>Inserir Aluno na DB</h1>
+                <input type="number" name="numero_aluno" id="numero_aluno" placeholder="Número do Aluno">
+                <input type="text" name="nome_aluno" id="nome_aluno" placeholder="Nome do Aluno">
+                <input type="text" name="curso_aluno" id="curso_aluno" placeholder="Curso do Aluno">
+                <button onclick=inserirAlunoDB()>Inserir Aluno na DB</button>
+            </div>
+
+            <div class="mostrar_dados">
+                <h1>Dados Alunos na DB</h1>
+                <table class="alunos_table_db" id="alunos_table_db">
+                    <thead>
+                        <tr>
+                            <th>Número</th>
+                            <th>Nome</th>
+                            <th>Curso</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="script.js"></script>
+</body>
+</html>

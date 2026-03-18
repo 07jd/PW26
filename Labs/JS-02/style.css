@@ -1,0 +1,114 @@
+body
+{
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 30% 70%;
+    background-color: rgb(8, 5, 51);
+    color: white;
+}
+
+/* Parte 1 */
+.parte1
+{
+    display: flex;
+    flex-direction: column;
+}
+
+.parte1 .title
+{
+    flex: 5%;
+    text-align: center;
+
+    background-color: rgb(2, 27, 65);
+    border-style: solid;
+}
+
+.parte1 .body
+{
+    flex: 95%;
+    border-right-style: solid;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    padding-left: 25px;
+    padding-right: 25px;    
+    gap: 5px;
+}
+
+/* ============================================ */
+
+.parte2
+{
+    display: flex;
+    flex-direction: column;
+}
+
+/* Title */
+.parte2 .title
+{
+    flex: 5%;
+    text-align: center;
+
+    background-color: rgb(2, 27, 65);
+    border-style: solid;
+}
+
+.parte2 h1
+{
+    text-align: center;
+}
+
+/* 'Body' */
+
+.parte2 .body
+{
+    flex: 95%;
+    display: flex;
+    flex-direction: row;
+}
+
+.insercao_dados
+{
+    flex: 50%;
+    padding: 5px;
+    border-right-style: dashed;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+.mostrar_dados
+{
+    flex: 50%;
+    padding: 5px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.alunos_table_db
+{
+    height: 100%;
+    display: block;
+
+    background-color: rgb(2, 27, 65);
+    border-style: solid;
+    border-radius: 5px;
+    border-width: 2px;
+
+    justify-content: center;
+    text-align: center;
+}
+
+.alunos_table_db thead,
+.alunos_table_db tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
