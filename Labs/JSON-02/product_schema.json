@@ -1,0 +1,63 @@
+{
+    "title": "Product",
+    "description": "Product schema",
+    "type": "object",
+    "properties": {
+        "Product": {
+            "type": "object",
+            "properties": {
+                "ProductID": {
+                    "type": "string",
+                    "pattern": "^[0-9]+"
+                },
+                "Category": {
+                    "type": "string"
+                },
+                "ProductName": {
+                    "type": "string"
+                },
+                "ProductType": {
+                    "type": "string"
+                },
+                "Price": {
+                    "type": "string",
+                    "pattern": "^\\+?[0-9]+(\\.[0-9]+)?$"
+                },
+                "Class": {
+                    "type": "string"
+                },
+                "Company": {
+                    "type": "string"
+                },
+                "Provider": {
+                    "type": "object",
+                    "properties": {
+                        "Name": {
+                            "type": "string"
+                        },
+                        "City": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "Name",
+                        "City"
+                    ]
+                }
+            },
+            "required": [
+                "ProductID",
+                "Category",
+                "ProductName",
+                "ProductType",
+                "Price",
+                "Class",
+                "Company",
+                "Provider"
+            ]
+        }
+    },
+    "required": [
+        "Product"
+    ]
+}
