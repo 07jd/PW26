@@ -15,10 +15,19 @@ self.addEventListener("install", event => {
 
 self.addEventListener("fetch", event => {
     event.respondWith(
-        caches.match(event.request).then(response => {
-            return response || fetch(event.request).catch(() => {
-                return caches.match("/index.html");
+        fetch(event.request).then(response => {
+            // Resposta da network, cache/update files, usar versao fornecida pelo fetch
+            const Requestcopy = response.clone();
+            caches.open(CACHE_NAME).then(cache => {
+                cache.put(event.request, Requestcopy)
             });
+            return response;
+        })
+        .catch(() => {
+            // Fetch falhou, usar ficheiros cached
+            return caches.match(event.request).then(cachedResponse => {
+                return cachedResponse || caches.match("/index.html");
+            })
         })
     );
 });
