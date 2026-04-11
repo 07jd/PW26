@@ -4,7 +4,7 @@ info:
   version: "1.0"
 
 servers:
-  - url: https://lab_example/
+  - url: https://localhost:8080/
 tags:
   - name: encomendas
   - name: clientes
@@ -21,20 +21,17 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
-            format: int64
-            minimum: 0
+            type: string
+            minLength: 1
       responses:
         '200':
-          description: Sucesso
+          description: Sucesso.
         '400':
-          description: Nao foi possível cancelar a encomenda.
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+          description: ID inválido.
+        '404':
+          description: Encomenda não encontrada.
+        '500':
+          description: Server error.
   /encomendas:
     post:
       tags:
@@ -51,12 +48,12 @@ paths:
       responses:
         '200':
           description: Sucesso.
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+        '400':
+          description: Input inválido.
+        '404':
+          description: Cliente associado à encomenda não encontrado.
+        '500':
+          description: Server error.
     get:
       tags:
         - encomendas
@@ -65,17 +62,13 @@ paths:
       description: Obter todas as Encomendas
       responses:
         '200':
-          description: Sucesso
+          description: Sucesso.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/EncomendaLista'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+        '500':
+          description: Server Errror.
   /encomendas/{id}:
     get:
       tags:
@@ -87,18 +80,24 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
-            format: int64
-            minimum: 0
+            type: string
+            minLength: 1
       responses:
         '200':
-          description: Sucess
+          description: Sucesso.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Encomenda'
+        '400':
+          description: ID inválido.
+        '404':
+          description: Encomenda não encontrada.
+        '500':
+          description: Server error.
+
     patch:
-      tags: 
+      tags:
         - encomendas
       summary: Alterar conteudo da encomenda
       description: Alterar conteudo da encomenda via Id.
@@ -107,30 +106,25 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
-            format: int64
-            minimum: 0
-      requestBody: 
+            type: string
+            minLength: 1
+      requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/EncomendaPatch'
-      responses: 
+      responses:
         '200':
-          description: Sucesso
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Encomenda'
+          description: Sucesso.
         '400':
-          description: Id inválido.
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+          description: Input inválido.
+        '404':
+          description: Encomenda não encontrada
+        '409':
+          description: Conteudo da encomenda nao pode ser alterada, devido ao seu estado atual.
+        '500':
+          description: Server error.
     put:
       tags:
         - encomendas
@@ -141,9 +135,8 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
-            format: int64
-            minimum: 0
+            type: string
+            minLength: 1
       requestBody:
         required: true
         content:
@@ -154,13 +147,11 @@ paths:
         '200':
           description: Sucesso.
         '400':
-          description: Id inválido.
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+          description: Input inválido.
+        '404':
+          description: Encomenda não encontrada.
+        '500':
+          description: Server error.
   /clientes/{user_id}/encomendas/cancel-all:
     post:
       tags:
@@ -173,18 +164,17 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
-            format: int64
-            minimum: 0
+            type: string
+            minLength: 1
       responses:
         '200':
-          description: Sucess
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+          description: Sucesso.
+        '400':
+          description: ID inválido.
+        '404':
+          description: Cliente não encontrado.
+        '500':
+          description: Server error.
   /clientes:
     post:
       tags:
@@ -201,19 +191,21 @@ paths:
               $ref: "#/components/schemas/ClientePost"
       responses:
         '200':
-          description: Sucesso, devolve cliente com o ID gerado.
+          description: Sucesso.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Cliente"
         '400':
-          description: Invalid input
-        default:
-          description: Unexpected error
+          description: Invalid input.
+        '409':
+          description: Algum dos parametros fornecidos está em conflito.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error.
     get:
       tags:
         - clientes
@@ -222,17 +214,13 @@ paths:
       operationId: getAllClientes
       responses:
         '200':
-          description: Sucesso
+          description: Sucesso.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ClienteLista'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+        '500':
+          description: Server error.
   /clientes/{user_id}/encomendas:
     get:
       tags:
@@ -245,22 +233,21 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
-            format: int64
-            minimum: 0
+            type: string
+            minLength: 1
       responses:
         '200':
-          description: Sucess
+          description: Sucesso.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/EncomendaLista'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+        '400':
+          description: Input inválido.
+        '404':
+          description: Cliente não encontrado.
+        '500':
+          description: Server error.
   /clientes/{user_id}:
     get:
       tags:
@@ -273,24 +260,21 @@ paths:
           in: path
           required: true
           schema:
-           type: integer
-           format: int64
-           minimum: 0
+           type: string
+           minLength: 1
       responses:
         '200':
-          description: "Sucesso"
+          description: Sucesso.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Cliente"
         '400':
-          description: "ID inválido"
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+          description: Input inválido.
+        '404':
+          description: Cliente não encontrado.
+        '500':
+          description: Server error.
     put:
       tags:
         - clientes
@@ -302,9 +286,8 @@ paths:
           in: path
           required: true
           schema:
-           type: integer
-           format: int64
-           minimum: 0
+           type: string
+           minLength: 1
       requestBody:
         required: true
         content:
@@ -313,15 +296,17 @@ paths:
               $ref: "#/components/schemas/ClientePost"
       responses:
         '200':
-          description: "Cliente atualizado com sucesso"
+          description: Sucesso.
         '400':
-          description: "ID inválido"
-        default:
-          description: Unexpected error
+          description: Input inválido.
+        '409':
+          description: Duplicated parameter.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error.
     delete:
       tags:
         - clientes
@@ -333,26 +318,23 @@ paths:
           in: path
           required: true
           schema:
-           type: integer
-           format: int64
-           minimum: 0
+           type: string
+           minLength: 1
       responses:
         '200':
-          description: Cliente deletado com sucesso.
+          description: Sucesso.
         '400':
-          description: ID inválido.
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+          description: Input inválido.
+        '494':
+          description: Cliente não encontrado.
+        '500':
+          description: Server error.
 
 components:
   schemas:
     Produto:
       type: object
-      properties: 
+      properties:
         id:
           type: integer
           format: int64
@@ -376,13 +358,11 @@ components:
         - completa
       properties:
         id:
-          type: integer
-          format: int64
-          minimum: 0
+          type: string
+          minLength: 1
         clienteID:
-          type: integer
-          format: int64
-          minimum: 0
+          type: string
+          minLength: 1
         content:
           type: array
           items:
@@ -397,19 +377,19 @@ components:
             required:
             - qnt
             - item
-          example: 
+          example:
             [
               {
                 qnt: 2,
-                item: 
+                item:
                 {
                   id: 9271,
-                  name:"1k Arroz", 
+                  name:"1k Arroz",
                   price: 3.99
                 }
               }
             ]
-    
+
         data_envio:
           type: string
           format: date-time
@@ -430,9 +410,8 @@ components:
         - content
       properties:
         clienteID:
-          type: integer
-          format: int64
-          minimum: 0
+          type: string
+          minLength: 1
         content:
           type: array
           items:
@@ -482,9 +461,8 @@ components:
         - telefone
       properties:
         id:
-          type: integer
-          format: int64
-          minimum: 0
+          type: string
+          minLength: 1
         username:
           type: string
         primeiroNome:
@@ -515,6 +493,7 @@ components:
           type: string
         email:
           type: string
+          format: email
         palavra_passe:
           type: string
         telefone:
