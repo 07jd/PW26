@@ -1,0 +1,92 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab NODE-02</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="iteracao_server">
+        <div>
+            <h1>Obter dados de um cliente</h1>
+            <label for="clienteID">ID do cliente</label>
+            <input type="text" name="clienteID" id="clienteID">
+            <button type="button" id="getCliente">Submeter</button>
+        </div>
+
+        <div>
+            <h1>Adicionar cliente</h1>
+            <label for="clientnewid">ID</label>
+            <input type="number" min="0" id="clientnewid" name="clientnewid">
+            <br>
+            <label for="nome">Nome</label>
+            <input type="text" name="nome" id="nome">
+            <br>
+            <label for="endereco">Endereço</label>
+            <input type="text" name="endereco" id="endereco">
+            <br>
+            <label for="numero">Numero</label>
+            <input type="number" name="numero" id="numero" min="0">
+            <br>
+            <label for="cidade">Cidade</label>
+            <input type="text" name="cidade" id="cidade">
+            <br>
+            <label for="cod_postal">Codigo Postal</label>
+            <input type="text" name="cod_postal" id="cod_postal">
+            <br>
+            <label for="tarifa">[Opcional] Tipo de Tarifa</label>
+            <input type="text" name="tarifa" id="tarifa">
+            <br>
+            <label for="fornecedor">[Opcional] Fornecedor</label>
+            <input type="text" name="fornecedor" id="fornecedor">
+            <br>
+            <label for="contrato_ativo">[Opcional] Estado do Contrato</label>
+            <input type="number" name="contrato_ativo" id="contrato_ativo" min="0" max="1">
+            <br>
+            <button id="addCliente">Adicionar cliente</button>
+        </div>
+
+        <div>
+        <h1>Adicionar consumo</h1>
+            <label for="id">ID do Cliente</label>
+            <input id="id" type="number" min="0">
+        <br>
+            <label for="mes">Mes</label>
+            <select id="mes">
+              <option value="Janeiro">Janeiro</option>
+              <option value="Fevereiro">Fevereiro</option>
+              <option value="Março">Março</option>
+              <option value="Abril">Abril</option>
+              <option value="Maio">Maio</option>
+              <option value="Junho">Junho</option>
+              <option value="Julho">Julho</option>
+              <option value="Agosto">Agosto</option>
+              <option value="Setembro">Setembro</option>
+              <option value="Outubro">Outubro</option>
+              <option value="Novembro">Novembro</option>
+              <option value="Dezembro">Dezembro</option>
+            </select>
+        <br>
+            <label for="ano">Ano</label>
+            <input id="ano" type="number" min="1900">
+        <br>
+            <label for="kwh">Kwh</label>
+            <input id="kwh" type="number" min="0">
+        <br>
+            <label for="custo">Custo</label>
+            <input id="custo" type="number" min="0">
+        <br>
+            <label for="data">Data de Leitura</label>
+            <input id="data" type="date">
+        <br>
+            <button type="button" id="addConsumo">Adicionar</button>
+        </div>
+    </div>
+    <div id="output_div">
+        <h1>Output</h1>
+        <pre id="output"></pre>
+    </div>
+
+    <script src="index.js"></script>
+</body>
+</html>

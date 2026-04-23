@@ -1,0 +1,16 @@
+{
+  "name": "lab-node02",
+  "version": "1.0.0",
+  "description": "Lab Node-02",
+  "main": "app.js",
+  "scripts": {
+    "start": "node src/app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  }
+}
