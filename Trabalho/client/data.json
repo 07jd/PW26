@@ -1,0 +1,156 @@
+[
+  {
+    "_id": { "$oid": "6a06b273d7595b31b50e7471" },
+    "name": "Urtiga",
+    "description": "",
+    "category": "medicinal",
+    "createdBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "updatedBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "createdAt": { "$date": "2026-05-15T06:04:15.185Z" },
+    "updatedAt": { "$date": "2026-05-15T07:07:20.631Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "6a06b273d7595b31b50e7472" },
+    "name": "Hissopo",
+    "description": "",
+    "category": "medicinal",
+    "createdBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "updatedBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "createdAt": { "$date": "2026-05-15T06:05:15.185Z" },
+    "updatedAt": { "$date": "2026-05-15T07:08:20.631Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "6a06b273d7595b31b50e7473" },
+    "name": "Cavalinha",
+    "description": "",
+    "category": "medicinal",
+    "createdBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "updatedBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "createdAt": { "$date": "2026-05-15T06:06:15.185Z" },
+    "updatedAt": { "$date": "2026-05-15T07:09:20.631Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "6a06b273d7595b31b50e7474" },
+    "name": "Malva",
+    "description": "",
+    "category": "medicinal",
+    "createdBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "updatedBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "createdAt": { "$date": "2026-05-15T06:07:15.185Z" },
+    "updatedAt": { "$date": "2026-05-15T07:10:20.631Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "6a06b273d7595b31b50e7475" },
+    "name": "Arnica",
+    "description": "",
+    "category": "medicinal",
+    "createdBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "updatedBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "createdAt": { "$date": "2026-05-15T06:08:15.185Z" },
+    "updatedAt": { "$date": "2026-05-15T07:11:20.631Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "6a06b273d7595b31b50e7476" },
+    "name": "Tanchagem",
+    "description": "",
+    "category": "medicinal",
+    "createdBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "updatedBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "createdAt": { "$date": "2026-05-15T06:09:15.185Z" },
+    "updatedAt": { "$date": "2026-05-15T07:12:20.631Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "6a06b273d7595b31b50e7477" },
+    "name": "Valeriana",
+    "description": "",
+    "category": "medicinal",
+    "createdBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "updatedBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "createdAt": { "$date": "2026-05-15T06:10:15.185Z" },
+    "updatedAt": { "$date": "2026-05-15T07:13:20.631Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "6a06b273d7595b31b50e7478" },
+    "name": "Melissa",
+    "description": "",
+    "category": "medicinal",
+    "createdBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "updatedBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "createdAt": { "$date": "2026-05-15T06:11:15.185Z" },
+    "updatedAt": { "$date": "2026-05-15T07:14:20.631Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "6a06b273d7595b31b50e7479" },
+    "name": "Ginseng",
+    "description": "",
+    "category": "medicinal",
+    "createdBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "updatedBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "createdAt": { "$date": "2026-05-15T06:12:15.185Z" },
+    "updatedAt": { "$date": "2026-05-15T07:15:20.631Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "6a06b273d7595b31b50e7480" },
+    "name": "Alcaçuz",
+    "description": "",
+    "category": "medicinal",
+    "createdBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "updatedBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "createdAt": { "$date": "2026-05-15T06:13:15.185Z" },
+    "updatedAt": { "$date": "2026-05-15T07:16:20.631Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "6a06b273d7595b31b50e7481" },
+    "name": "Babosa",
+    "description": "",
+    "category": "medicinal",
+    "createdBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "updatedBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "createdAt": { "$date": "2026-05-15T06:14:15.185Z" },
+    "updatedAt": { "$date": "2026-05-15T07:17:20.631Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "6a06b273d7595b31b50e7482" },
+    "name": "Arruda",
+    "description": "",
+    "category": "medicinal",
+    "createdBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "updatedBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "createdAt": { "$date": "2026-05-15T06:15:15.185Z" },
+    "updatedAt": { "$date": "2026-05-15T07:18:20.631Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "6a06b273d7595b31b50e7483" },
+    "name": "Cardo Mariano",
+    "description": "",
+    "category": "medicinal",
+    "createdBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "updatedBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "createdAt": { "$date": "2026-05-15T06:16:15.185Z" },
+    "updatedAt": { "$date": "2026-05-15T07:19:20.631Z" },
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "6a06b273d7595b31b50e7484" },
+    "name": "Eucalipto",
+    "description": "",
+    "category": "medicinal",
+    "createdBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "updatedBy": { "$oid": "6a03ebef990f3504734461ad" },
+    "createdAt": { "$date": "2026-05-15T06:17:15.185Z" },
+    "updatedAt": { "$date": "2026-05-15T07:20:20.631Z" },
+    "__v": 0
+  }
+]
