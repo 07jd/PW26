@@ -37,7 +37,7 @@ interface herb {
   category: string;
 }
 
-const endpoint = "/lote";
+export const endpoint = "/lote";
 async function getData(
   msg: MessageInstance,
   setLoadingPage: React.Dispatch<React.SetStateAction<boolean>>,

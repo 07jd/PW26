@@ -24,7 +24,7 @@ interface herbData {
   category: string;
 }
 
-interface plansData {
+export interface plansData {
   id: string;
   name: string;
 }
