@@ -67,31 +67,6 @@ router.get("/me", authMiddleware, async (req,res) => {
     }
 })
 
-// Register User endpoint
-// On sucess (code 200): store jwt token in user cookies and return code 200
-// On error (code: 400/500) return json of type (ex):
-// {
-//    type: "duplicated",
-//    errors: {
-//        email: "Email já em uso"
-//    }
-// }
-router.post("/register", authMiddleware, adminPage, async (req,res) => {
-    try
-    {
-        const input_data = req.body;
-        const user_raw = await userModel.create(input_data);
-        const user = {
-            id: user_raw._id,
-            ...user_raw
-        };
-        delete user._id;
-
-        res.status(200).json(user);
-    }
-    catch(e) { errorToJson(e, res); }
-})
-
 // Login User endpoint
 // On sucess (code 200): store jwt token in user cookies and returns code.
 // On error (code: 400/500) return json of type (ex):
@@ -262,8 +237,7 @@ router.post("/refresh", async (req,res) => {
 })
 
 // Updates data from user,
-// an admin can pass "id" on body to change another user's data
-// On error returns the same error messages as the /register endpoint
+// Can only update email/password/username
 // 200 - Sucess
 // 400 - Invalid params
 // 401 - Auth invalid
@@ -271,60 +245,29 @@ router.post("/refresh", async (req,res) => {
 router.patch("/", authMiddleware, async (req,res) => {
     try
     {
+        // Clean up input
         const data = req.body;
-        if(!data) return res.status(400).json({
-            type: "validation",
-            errors: {
-                message: "No data in body"
-            }
-        });
-
-
-        // Admin can change anybody's data and its own
-        // Other users can only change own data excluding role parameter
-        const token = req.user;
-        const allowed_fields = ["username", "password", "email", "id", "role"];
-        let target_id = token.id;
-
-        Object.keys(data).forEach((key) => {
-            if(!allowed_fields.includes(key))
-            {
-                return res.status(400).json({
-                    type: "validation",
-                    errors: {
-                        message: "Parametros inválidos"
-                    }
-                });
-            }
-        })
-
-        // If its an admin doing the request, use provided id in body
-        // if not present, continue but 
-        if (token.role === "Administrador" && data.id)
+        const user_id = req.user.id;
+        const allowed_fields = ["username", "password", "email"];
+        const clean_input = {};
+        for(const [key, value] of Object.entries(data))
         {
-            target_id = data.id;
-            delete data.id;
+            if(allowed_fields.includes(key)) clean_input.key = value;
         }
 
-        // No user can change its role, only admins
-        if(token.role !== "Administrador" && (data.role || data.id)) return res.status(403).json({
+        if(!clean_input) return res.status(400).json({
             type: "validation",
             errors: {
-                message: "Afim de atualizar esses campos é necessário ser administrador"
+                message: "No valid data in body"
             }
         });
 
-        const user = await userModel.findById(target_id);
-        if (!user) return res.status(404).json({
-            type: "update",
-            errors: {
-                message: "Não foi possível achar um utilizador com o id fornecido"
-            }
-        });
+        const user = await userModel.findById(user_id);
+        if (!user) return res.status(404).send();
 
         Object.assign(user, data);
         await user.save();
-        res.status(200).json(user);
+        return res.status(200).json(user);
     }
     catch(e)
     {
@@ -333,43 +276,59 @@ router.patch("/", authMiddleware, async (req,res) => {
     }
 });
 
-// Get user by id
-// only returns basic info (id, email, username)
-router.get("/search/:id", authMiddleware, async (req, res) => {
-    try
-    {
-        const id = req.params.id;
-        if(!mongoose.isValidObjectId(id)) return res.status(400).send();
 
-        const user = await userModel.findById(id, "username email");
-        if(!user) return res.status(404).send();
-
-        return res.status(200).json({
-            id: id,
-            username: user.username,
-            email: user.email
-        });
-    }
-    catch(e)
-    {
-        console.log(e);
-        return res.status(500).send();
-    }
-})
-
+// Returns 200 if in a valid session
 router.get("/session", authMiddleware, async (_req,res) => {
     return res.status(200).send();
 })
 
+
 /*
 * Admin endpoints,
-* get users full info
 */
+
+// Register user
+router.post("/register", authMiddleware, adminPage, async (req,res) => {
+    try
+    {
+        const input_data = req.body;
+        await userModel.create(input_data);
+        res.status(200).send();
+    }
+    catch 
+    { 
+        errorToJson(e, res); 
+    }
+})
+
+// Update user info
+router.patch("/update/:id", authMiddleware, adminPage, async (req,res) => {
+    const id = req.params.id;
+    const data =req.body;
+    if(!mongoose.isValidObjectId(id) || !data) return res.status(400).send();
+
+    try
+    {
+        const user = await userModel.findById(id);
+        if(!user) return res.status(404).send();
+
+        Object.assign(user, data);
+        await user.save();
+
+        return res.status(200).send();
+    }
+    catch(e)
+    {
+        errorToJson(e, res);
+    }
+})
+
+// Get all users
 router.get("/", authMiddleware, adminPage, async (_req, res) => {
     try
     {
         const users = await userModel.find({}).lean();
-        const clean = users.map(({ _id, ...rest }) => ({
+        const clean = users.map(({ _id, password, ...rest }) => ({
             id: _id,
             ...rest
         }));

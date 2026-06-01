@@ -1,5 +1,5 @@
 import type { MessageInstance } from "antd/es/message/interface";
-import { query_endpoint, type herbEntryData } from "./erva";
+import { main_endpoint, type herbEntryData } from "./erva";
 import { getNewTokenIfExpired } from "../../util";
 
 export async function getEntries(
@@ -10,7 +10,7 @@ export async function getEntries(
   try {
     setLoading(true);
     await getNewTokenIfExpired();
-    const response = await fetch(query_endpoint, {
+    const response = await fetch(main_endpoint, {
       method: "GET",
       credentials: "include",
     });

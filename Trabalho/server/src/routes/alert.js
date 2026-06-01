@@ -9,12 +9,12 @@ const route_name = "/alert";
 const router = Router();
 export { route_name, router };
 
-// Get all active alerts assigned to user role
+// Get all ACTIVE alerts assigned to user role
 router.get("/", authMiddleware, async (req,res) => {
     try
     {
         const role = req.user.role;
-        const alerts = (await alertModel.find({ roles: role, status: "ativo"}).lean()).map(({ _id, ...rest}) => ({
+        const alerts = (await alertModel.find({ roles: role, status: "ativo"}).sort({ timestamp: -1 }).lean()).map(({ _id, ...rest}) => ({
             id: _id,
             ...rest
         }));
@@ -23,12 +23,29 @@ router.get("/", authMiddleware, async (req,res) => {
     }   
     catch(e)
     {
-        console.log(e);
         return res.status(500).send();
     }
 })
 
-// Get all alerts
+// Gets all alerts assigned to user role
+router.get("/everything", authMiddleware, async (req,res) => {
+    try
+    {
+        const role = req.user.role;
+        const alerts = (await alertModel.find({ roles: role }).sort({ timestamp: -1 }).lean()).map(({ _id, ...rest}) => ({
+            id: _id,
+            ...rest
+        }));
+
+        return res.status(200).json(alerts);
+    }   
+    catch(e)
+    {
+        return res.status(500).send();
+    }
+})
+
+// Get all alerts across all roles
 router.get("/all", authMiddleware, adminPage, async (_req, res) => {
     try
     {

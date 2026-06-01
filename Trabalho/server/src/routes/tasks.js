@@ -2,7 +2,7 @@ import { Router } from "express"
 import authMiddleware from "../middleware/authMiddlewares.js"
 import loteModel from "../models/lote.js";
 import mongoose from "mongoose";
-import taskModel from "../models/taks.js";
+import taskModel from "../models/task.js";
 import { errorToJson } from "../util/db.js";
 
 const route_name = "/task";
@@ -44,30 +44,6 @@ router.post("/:lote", authMiddleware, async (req,res) => {
         const lote = await loteModel.findById(lote_id);
         if(!lote) return res.status(404).send();
         
-        const data = req.body;
-        data.lote = lote._id; 
-
-        if(data.scheduledFor && data.scheduledFor < Date.now())
-        {
-            return res.status(400).json({
-                type: "validation",
-                errors: {
-                    scheduledFor: "A data de agenda deve ser depois da atual"
-                }
-            });
-        }
-
-        if(data.doneAt && data.doneAt < Date.now())
-        {
-            data.doneBy = req.user.id;
-            return res.status(400).json({
-                type: "validation",
-                errors: {
-                    doneAt: "A data de conclusão deve ser depois da atual"
-                }
-            });
-        }
-
         await taskModel.create(data);
         return res.status(200).send();
     }

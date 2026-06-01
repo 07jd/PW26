@@ -20,6 +20,11 @@ const metricSchema = new mongoose.Schema({
         required: [true, "Humidade necessária"],
         min: [0, "Humidade deve ser >=0"],
         max: [100, "Humidade deve ser <=100"]
+    },
+    time: {
+        type: Date,
+        default: Date.now,
+        unique: [true, "Já existe um registro associado a esse momento"]
     }
 }, { timestamps: true });
 

@@ -10,7 +10,7 @@ import {
 import TextArea from "antd/es/input/TextArea";
 import { useEffect, useState } from "react";
 import { getNewTokenIfExpired } from "../../util";
-import type { plansData } from "./adicionar";
+import { endpoint, endpoint_plans, type plansData } from "./adicionar";
 import dayjs from "dayjs";
 
 interface updateData {
@@ -44,7 +44,7 @@ export function Atualizar() {
   const getPlans = async () => {
     try {
       await getNewTokenIfExpired();
-      const response = await fetch("/plan/search");
+      const response = await fetch(endpoint_plans);
 
       if (response.ok) {
         const data = await response.json();
@@ -66,7 +66,7 @@ export function Atualizar() {
         return;
       }
 
-      const response = await fetch(`/lote/search?lote=${id}`);
+      const response = await fetch(`${endpoint}/${id}`);
       if (response.status == 404 || response.status == 400) {
         msg.open({
           type: "error",
@@ -100,7 +100,7 @@ export function Atualizar() {
       const id = form.getFieldValue("lote");
       if (!id) return;
 
-      const response = await fetch(`/lote/${id}`, {
+      const response = await fetch(`${endpoint}/${id}`, {
         method: "PATCH",
         credentials: "include",
         headers: {

@@ -11,122 +11,73 @@ const route_name = "/lote";
 const router = Router();
 export { route_name, router };
 
-/*
-* search?lote=XXXXXX -> devolve detalhes sobre lote de num X
-* search?page=XXXXXX -> devolve pagina x com full info de lotes (ordem crescente do num)
-* search             -> devolve {num, id} de todos os lotes
-*/
-router.get("/search", authMiddleware, async (req,res) => {
+// Get lote by num
+router.get("/:num", authMiddleware, async (req, res) => {
     try
     {
-        const num_lote = req.query.lote;
-        if(num_lote)
-        {
-            const lote = await loteModel.findOne({ num: num_lote });
-            if(!lote) return res.status(404).send();
+        const num_lote = req.params.num;
+        const lote = await loteModel.findOne({ num: num_lote }).lean();
+        if(!lote) return res.status(404).send();
+        
+        const clean = {
+            id: lote._id,
+            ...lote
+        };
 
-            const clean = {
-                id: lote._id,
-                ...lote
-            };
-            delete clean._id;
-
-            return res.status(200).json(clean);
-        }
-
-        const page = req.query.page;
-        if(page)
-        {
-            if(page < 0)
-            {
-                const lotes = (await loteModel.find().sort({ num: 1 })
-                    .populate("herb", "_id name category")
-                    .populate("plans", "_id name type")
-                    .populate("createdBy", "_id username email")
-                    .lean());
-
-                const result = [];
-                for(const lote of lotes)
-                {
-                    const el = lote;
-                    el.id = el._id;
-                    el.createdBy.id = el.createdBy._id;
-                    delete el._id;
-                    delete el.createdBy._id;
-
-                    if(el.herb)
-                    {
-                        el.herb.id = el.herb._id;
-                        delete el.herb._id;
-                    }
-
-                    for(const plan of el.plans)
-                    {
-                        plan.id = plan._id;
-                        delete plan._id;
-                    }
-
-                    result.push(el);
-                }
-
-                return res.status(200).json(result);
-            }
-
-
-            const lotes = (await loteModel.find().sort({ num: 1 }).skip(page * 25).limit(25).lean())
-                .map(({_id, ...rest}) => ({
-                    id: _id,
-                    ...rest
-                }));
-
-            return res.status(200).json(lotes);
-        }
-
-        const lotes = (await loteModel.find({}, "_id num").sort({ num: 1 }).lean()) .map(({_id, ...rest}) => ({
-            id: _id,
-            ...rest
-        }));
-
-        return res.status(200).json(lotes);
+        delete clean._id;
+        return res.status(200).json(clean);
     }
     catch
     {
-        console.log(e);
         return res.status(500).send();
     }
 })
 
-// Associar plano
-router.post("/plano/:lote/:id", authMiddleware, supervisorPage, async (req, res) => {
+// Get all lotes
+router.get("/", authMiddleware, async (_req, res) => {
     try
     {
-        const lote_num = Number(req.params.lote);
-        const plano_id = req.params.id;
+        const lotes = (await loteModel.find().sort({ num: 1 })
+            .populate("herb", "_id name category")
+            .populate("plans", "_id name type")
+            .populate("createdBy", "_id username email")
+            .populate("updatedBy", "_id username email")
+            .lean())
+        
+        const result = [];
+        for(const lote of lotes)
+        {
+            const el = lote;
+            el.id = el._id;
+            el.createdBy.id = el.createdBy._id;
+            delete el._id;
+            delete el.createdBy._id;
 
+            if(el.herb)
+            {
+                el.herb.id = el.herb._id;
+                delete el.herb._id;
+            }
 
-        console.log(lote_num);
-        console.log(plano_id);
+            if(el.updatedBy)
+            {
+                el.updatedBy.id = el.updatedBy._id;
+                delete el.updatedBy._id;
+            }
 
-        if (Number.isNaN(lote_num)) return res.status(400).send();
-        if (!mongoose.Types.ObjectId.isValid(plano_id)) return res.status(400).send();
+            for(const plan of el.plans)
+            {
+                plan.id = plan._id;
+                delete plan._id;
+            }
 
-        const lote = await loteModel.findOne({ num: lote_num });
-        if(!lote) return res.status(404).send();
+            result.push(el);
+        }
 
-        const plano = await planModel.findById(plano_id);
-        if(!plano) return res.status(404).send();
-
-
-        await loteModel.updateOne(
-            { num:  lote_num },
-            { $addToSet: { plans: plano._id }}
-        )
-
-        return res.status(200).send();
+        return res.status(200).json(result);
     }
-    catch(e)
+    catch
     {
-        console.log(e);
         return res.status(500).send();
     }
 })
@@ -154,7 +105,35 @@ router.post("/", authMiddleware, supervisorPage, async (req, res) => {
             if(!herb) return res.status(400).json(msg);
         }
 
-        if(data.start && data.start > Date.now())
+        if(data.plans)
+        {
+            for(const plan of data.plans)
+            {
+                const plan_data = await planModel.findById(plan);
+                if(!plan_data)
+                {
+                    return res.status(400).json({
+                        type: "validation",
+                        errors: {
+                            plans: "Há um plano inválido na lista"
+                        }
+                    })
+                }
+
+                if(plan_data.herb.toString() !== data.herb.toString())
+                {
+                    return res.status(400).json({
+                        type: "validation",
+                        errors: {
+                            plans: `O plano "${plan_data.name}" não é compatível com a erva selecionada`
+                        }
+                    })
+                }
+            }
+        }
+
+        console.log(data.start);
+        if(data.start && data.start > new Date())
         {
             const msg = {
                 type: "validation",
@@ -167,37 +146,6 @@ router.post("/", authMiddleware, supervisorPage, async (req, res) => {
         }
         const lote = await loteModel.create(data);
         return res.status(200).json(lote);
-    }
-    catch(e)
-    {
-        console.log(e);
-        errorToJson(e, res);
-    }
-})
-
-// Update harvest measures 
-// params modificaveis:
-//  quantityHarvested
-//  quantityLoss
-router.patch("/harvest/:num", authMiddleware, async (req, res) => {
-    try
-    {
-        const num_lote = req.params.num;
-        console.log(num_lote);
-        const lote = await loteModel.findOne({ num: num_lote });
-        if(!lote) return res.status(404).send();
-
-        const raw = req.body;
-        const data = {
-            quantityHarvested: raw.quantityHarvested,
-            quantityLoss: raw.quantityLoss,
-            updatedBy: req.user.id
-        };
-
-        Object.assign(lote, data);
-        await lote.save();
-
-        return res.status(200).send();
     }
     catch(e)
     {
@@ -222,7 +170,7 @@ router.patch("/:num", authMiddleware, supervisorPage, async (req, res) => {
         delete data.updatedBy;
         data.updatedBy = req.user.id;
 
-        const lote = await loteModel.findOne({ num: num });
+        const lote = await loteModel.findOne({ num: num_lote });
         if(!lote) return res.status(404).send();
 
         if(data.herb)
@@ -242,6 +190,17 @@ router.patch("/:num", authMiddleware, supervisorPage, async (req, res) => {
                 }
             })
         }
+
+        if(data.end && (lote.start > new Date(data.end) || new Date() < new Date(data.end)))
+        {
+            return res.status(400).json({
+                type: "validation",
+                errors: {
+                    end: "Tempo de termino inválido"
+                }
+            });
+        }
+
         Object.assign(lote, data);
         await lote.save();
 

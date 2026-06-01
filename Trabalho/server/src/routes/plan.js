@@ -11,98 +11,58 @@ const route_name = "/plan";
 const router = Router();
 export { route_name, router };
 
-/*
-* search?name=XXXXXX -> devolve detalhes sobre plano de nome X
-* search?page=XXXXXX -> devolve pagina x com full info de planos (ordem decrescente de criação)
-* search?id=XXXXXX   
-* search?page=-1     -> devolve tudo
-* search             -> devolve {nome, id} de todos os planos
-*/
-router.get("/search", authMiddleware, async (req,res) => {
+// Get plan by id
+router.get("/:id", authMiddleware, async (req, res) => {
     try
     {
-        const plan_id = req.query.id;
-        if(plan_id)
-        {
-            if(!mongoose.isValidObjectId(plan_id)) return res.status(400).send();
-            const plan = await planModel
-              .findById(plan_id)
-              .populate("herb", "_id name category")
-              .lean();
-            
-              if (!plan) return res.status(404).send();
+        const plan_id = req.params.id;
+        if(!mongoose.isValidObjectId(plan_id)) return res.status(400).send();
+
+        const plan = await planModel
+          .findById(plan_id)
+          .populate("herb", "_id name category")
+          .lean();
+        if (!plan) return res.status(404).send();
+
+        const result = {
+          id: plan._id,
+          ...plan,
+          herb: plan.herb
+            ? {
+                id: plan.herb._id,
+                name: plan.herb.name,
+                category: plan.herb.category,
+              }
+            : null,
+        };
+
+        delete result._id;
 
 
-            const result = {
-              id: plan._id,
-              ...plan,
-              herb: plan.herb
-                ? {
-                    id: plan.herb._id,
-                    name: plan.herb.name,
-                    category: plan.herb.category,
-                  }
-                : null,
-            };
-            delete result._id;
+        return res.status(200).json(result);
+    }
+    catch
+    {
+        return res.status(500).send();
+    }
+})
 
-            return res.status(200).json(result);
-        }
-
-        const name = req.query.name;
-        if(name)
-        {
-            const plan = await planModel.findOne({ name: name });
-            if (!plan) return res.status(404).send();
-            
-            const clean = {
-                id: plan._id,
-                ...plan
-            };
-            delete clean._id;
-
-            return res.status(200).json(clean);
-        }
-
-        const page = req.query.page;
-        if(page)
-        {
-            if (page < 0)
-            {
-                const plans = (await planModel.find().sort({ createdAt: -1 })
-                    .populate("herb", "name description category")
-                    .lean())
-                    .map(({_id, ...rest}) => ({
-                        id: _id,
-                        ...rest
-                    }));
-
-                return res.status(200).json(plans);
-            }
-
-            const plans = (await planModel.find().sort({ createdAt: -1 }).skip(page * 25).limit(25).lean())
-                .map(({_id, ...rest}) => ({
-                    id: _id,
-                    ...rest
-                }));
-
-            const page_count = Math.floor((await planModel.countDocuments())/25);
-            return res.status(200).json({
-                pages: page_count,
-                data: plans
-            });
-        }
-
-        const plans = (await planModel.find({}, "_id name").lean()).map(({_id, ...rest}) => ({
-            id: _id,
-            ...rest
-        }));
+// Get all plans
+router.get("/", authMiddleware, async (_req, res) => {
+    try
+    {
+        const plans = (await planModel.find().sort({ createdAt: -1 })
+            .populate("herb", "name description category")
+            .lean())
+            .map(({_id, ...rest}) => ({
+                id: _id,
+                ...rest
+            }))
 
         return res.status(200).json(plans);
     }
-    catch(e)
+    catch
     {
-        console.log(e);
         return res.status(500).send();
     }
 })

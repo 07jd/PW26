@@ -8,8 +8,6 @@ const herb_schena = new mongoose.Schema({
         unique: [true, "Já existe uma erva com este nome"],
         minlength: [1, "O nome não deve estar vazio"],
         maxlength: [30, "O nome não deve exceder 30 caracteres"],
-        // Adaptada do schema do user
-        validate: [/^[A-Za-z0-9_]+$/, "Nome inválido"],
     },
     description: {
         type: String,

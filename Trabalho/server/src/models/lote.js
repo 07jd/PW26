@@ -90,7 +90,7 @@ const loteSchema = new mongoose.Schema({
 loteSchema.pre("save", async function () {
     if(this.quantityPlanted > 0)
     {
-        this.productivity = this.quantityHarvested / (this.quantityPlanted - this.quantityLoss);
+        this.productivity = (this.quantityHarvested - this.quantityLoss) / this.quantityPlanted * 100.0;
     }
 })
 

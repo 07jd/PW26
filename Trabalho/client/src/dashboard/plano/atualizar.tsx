@@ -66,7 +66,7 @@ export function Atualizar() {
     try {
       setLoading(true);
       await getNewTokenIfExpired();
-      const response = await fetch(`${endpoint}/search`);
+      const response = await fetch(endpoint);
 
       if (!response.ok) throw new Error();
       const data = await response.json();
@@ -86,7 +86,7 @@ export function Atualizar() {
   const getPlanDetails = async (id: string) => {
     try {
       await getNewTokenIfExpired();
-      const response = await fetch(`${endpoint}/search?id=${id}`);
+      const response = await fetch(`${endpoint}/${id}`);
 
       if (!response.ok) throw new Error();
 

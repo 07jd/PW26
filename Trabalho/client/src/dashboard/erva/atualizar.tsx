@@ -1,6 +1,6 @@
 import { Button, Card, Form, Input, message, Select } from "antd";
 import { useState } from "react";
-import { main_endpoint, query_endpoint, type herbEntryData } from "./erva";
+import { main_endpoint, type herbEntryData } from "./erva";
 import { getEntries } from "./shared";
 import { getNewTokenIfExpired } from "../../util";
 
@@ -21,7 +21,7 @@ export function Atualizar() {
   const getHerbInfo = async (id: string) => {
     try {
       await getNewTokenIfExpired();
-      const response = await fetch(`${query_endpoint}?id=${id}`);
+      const response = await fetch(`${main_endpoint}/${id}`);
       if (response.ok) {
         const data = await response.json();
         console.log(data);

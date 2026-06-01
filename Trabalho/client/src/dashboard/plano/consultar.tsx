@@ -63,7 +63,7 @@ async function getData(
   try {
     setLoadingPage(true);
     await getNewTokenIfExpired();
-    const response = await fetch(`${endpoint}/search?page=-1`);
+    const response = await fetch(endpoint);
 
     if (!response.ok) {
       if (response.status === 401) {

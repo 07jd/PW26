@@ -1,5 +1,5 @@
 import type { MessageInstance } from "antd/es/message/interface";
-import { query_endpoint } from "./erva";
+import { main_endpoint } from "./erva";
 import { Button, Descriptions, message, Modal, Table } from "antd";
 import { useEffect, useState } from "react";
 import { ReloadOutlined } from "@ant-design/icons";
@@ -34,7 +34,7 @@ async function getData(
   try {
     await getNewTokenIfExpired();
     setLoadingPage(true);
-    const response = await fetch(`${query_endpoint}?page=-1`);
+    const response = await fetch(`${main_endpoint}`);
 
     if (!response.ok) {
       if (response.status === 401) {

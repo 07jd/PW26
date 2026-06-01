@@ -48,18 +48,23 @@ export function SideMenu({
           key: "erva-consultar",
           label: "Consultar",
         },
-        {
-          key: "erva-adicionar",
-          label: "Adicionar",
-        },
-        {
-          key: "erva-atualizar",
-          label: "Atualizar",
-        },
-        {
-          key: "erva-remover",
-          label: "Remover",
-        },
+        ...(role.toLowerCase() === "administrador" ||
+        role.toLowerCase() === "responsável"
+          ? [
+              {
+                key: "erva-adicionar",
+                label: "Adicionar",
+              },
+              {
+                key: "erva-atualizar",
+                label: "Atualizar",
+              },
+              {
+                key: "erva-remover",
+                label: "Remover",
+              },
+            ]
+          : []),
       ],
     },
     {
@@ -71,18 +76,23 @@ export function SideMenu({
           key: "planos-consultar",
           label: "Consultar",
         },
-        {
-          key: "planos-adicionar",
-          label: "Adicionar",
-        },
-        {
-          key: "planos-atualizar",
-          label: "Atualizar",
-        },
-        {
-          key: "planos-remover",
-          label: "Remover",
-        },
+        ...(role.toLowerCase() === "administrador" ||
+        role.toLowerCase() === "responsável"
+          ? [
+              {
+                key: "planos-adicionar",
+                label: "Adicionar",
+              },
+              {
+                key: "planos-atualizar",
+                label: "Atualizar",
+              },
+              {
+                key: "planos-remover",
+                label: "Remover",
+              },
+            ]
+          : []),
       ],
     },
     {
@@ -94,18 +104,23 @@ export function SideMenu({
           key: "lote-consultar",
           label: "Consultar",
         },
-        {
-          key: "lote-adicionar",
-          label: "Adicionar",
-        },
-        {
-          key: "lote-atualizar",
-          label: "Atualizar",
-        },
-        {
-          key: "lote-remover",
-          label: "Remover",
-        },
+        ...(role.toLowerCase() === "administrador" ||
+        role.toLowerCase() === "responsável"
+          ? [
+              {
+                key: "lote-adicionar",
+                label: "Adicionar",
+              },
+              {
+                key: "lote-atualizar",
+                label: "Atualizar",
+              },
+              {
+                key: "lote-remover",
+                label: "Remover",
+              },
+            ]
+          : []),
       ],
     },
     {

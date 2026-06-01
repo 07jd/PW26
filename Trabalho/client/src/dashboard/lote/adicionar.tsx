@@ -29,9 +29,9 @@ export interface plansData {
   name: string;
 }
 
-const endpoint_herbs = "/herb/search";
-const endpoint_plans = "/plan/search";
-const endpoint = "/lote";
+export const endpoint_herbs = "/herb";
+export const endpoint_plans = "/plan";
+export const endpoint = "/lote";
 
 export function Adicionar() {
   const [form] = Form.useForm();
@@ -193,7 +193,9 @@ export function Adicionar() {
             ]}
           >
             <Select
-              showSearch
+              showSearch={{
+                optionFilterProp: "label",
+              }}
               allowClear
               options={herbsSearch.map((e) => ({
                 label: e.name,
@@ -215,8 +217,10 @@ export function Adicionar() {
             ]}
           >
             <Select
-              showSearch
               allowClear
+              showSearch={{
+                optionFilterProp: "label",
+              }}
               mode="multiple"
               options={plansSearch.map((e) => ({
                 label: e.name,
