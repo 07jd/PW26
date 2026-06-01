@@ -1,16 +1,22 @@
 import {
   CloudOutlined,
-  EditOutlined,
   FundOutlined,
   ReadOutlined,
   StarOutlined,
   SunOutlined,
   TruckOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import { useNavigate } from "react-router-dom";
 
-export function SideMenu({ role }: { role: string }) {
+export function SideMenu({
+  username,
+  role,
+}: {
+  username: string;
+  role: string;
+}) {
   const navigate = useNavigate();
   const items = [
     {
@@ -24,6 +30,12 @@ export function SideMenu({ role }: { role: string }) {
             key: "admin",
             label: "Administração",
             icon: <StarOutlined />,
+            children: [
+              {
+                key: "admin-utilizadores",
+                label: "Utilizadores",
+              },
+            ],
           },
         ]
       : []),
@@ -97,25 +109,6 @@ export function SideMenu({ role }: { role: string }) {
       ],
     },
     {
-      key: "tarefas",
-      label: "Tarefas",
-      icon: <EditOutlined />,
-      children: [
-        {
-          key: "tarefas-consultar",
-          label: "Consultar",
-        },
-        {
-          key: "tarefas-adicionar",
-          label: "Adicionar",
-        },
-        {
-          key: "tarefas-remover",
-          label: "Remover",
-        },
-      ],
-    },
-    {
       key: "metricas",
       label: "Metricas",
       icon: <CloudOutlined />,
@@ -128,15 +121,12 @@ export function SideMenu({ role }: { role: string }) {
           key: "metricas-adicionar",
           label: "Adicionar",
         },
-        {
-          key: "metricas-atualizar",
-          label: "Atualizar",
-        },
-        {
-          key: "metricas-remover",
-          label: "Remover",
-        },
       ],
+    },
+    {
+      key: "account",
+      label: username,
+      icon: <UserOutlined />,
     },
   ];
 
@@ -150,8 +140,6 @@ export function SideMenu({ role }: { role: string }) {
   };
 
   return (
-    <div>
-      <Menu onClick={(e) => goToPage(e.key)} mode="inline" items={items}></Menu>
-    </div>
+    <Menu onClick={(e) => goToPage(e.key)} mode="inline" items={items}></Menu>
   );
 }

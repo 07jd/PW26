@@ -37,12 +37,32 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      "/user/register": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        secure: false,
+      },
+      "/user/update": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        secure: false,
+      },
       "/herb": {
         target: "http://localhost:8080",
         changeOrigin: true,
         secure: false,
       },
       "/lote": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        secure: false,
+      },
+      "/metrics": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        secure: false,
+      },
+      "/lote/search": {
         target: "http://localhost:8080",
         changeOrigin: true,
         secure: false,

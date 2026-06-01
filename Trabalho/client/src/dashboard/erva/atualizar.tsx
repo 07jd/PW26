@@ -88,14 +88,13 @@ export function Atualizar() {
 
       const error_msg = await response.json();
 
-      if (error_msg.type === "duplicated" && error_msg.errors.name) {
+      if (error_msg.errors.name) {
         form.setFields([
           {
             name: "name",
             errors: [String(error_msg.errors.name)],
           },
         ]);
-
         return;
       }
 

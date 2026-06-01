@@ -114,13 +114,15 @@ export function Atualizar() {
           content: "Dados alterados",
         });
 
+        setValidLote(false);
         form.resetFields();
         return;
       }
 
-      const errors = (await response.json()).error;
+      const errors = (await response.json()).errors;
       if (!errors) throw new Error();
 
+      console.log(errors);
       for (const [key, val] of Object.entries(errors)) {
         if (key.includes("num")) {
           form.setFields([
@@ -140,10 +142,10 @@ export function Atualizar() {
           ]);
         }
 
-        if (key.includes("start")) {
+        if (key.includes("end")) {
           form.setFields([
             {
-              name: "start",
+              name: "end",
               errors: [String(val)],
             },
           ]);

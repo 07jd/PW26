@@ -153,6 +153,7 @@ export function Consulta() {
     return (
       <Modal
         open={popup}
+        closable={false}
         title="Detalhes"
         footer={[
           <Button key={"ok"} type="primary" onClick={() => setPopup(false)}>
