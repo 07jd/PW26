@@ -2,7 +2,9 @@ import { Router } from "express"
 import multer from "multer"
 import { parse } from "csv-parse/sync"
 import authMiddleware from "../middleware/authMiddlewares.js"
+//import { supervisorPage } from "../middleware/roleMiddlewares.js"
 import herbModel from "../models/herb.js"
+import planModel from "../models/plan.js"
 import { errorToJson } from "../util/db.js"
 import mongoose from "mongoose"
 
@@ -208,6 +210,37 @@ router.get("/", authMiddleware, async (_req,res) => {
         }));
 
         return res.status(200).json(herbs);
+    }
+    catch
+    {
+        return res.status(500).send();
+    }
+});
+
+router.delete("/:id", authMiddleware, async (req, res) => {
+    try
+    {
+        const id = req.params.id;
+        if(!mongoose.isValidObjectId(id)) return res.status(400).send();
+
+        const herb = herbModel.findById(id);
+        if(!herb) return res.status(404).send();
+
+        const plans_using_herb = (await planModel.find({ herb: herb._id})).lean();
+        if(plans_using_herb.length !== 0)
+        {
+           return res.status(400).json({
+            type: "deletion",
+            errors: {
+                herb: "Não é possível deletar a erva porque está em uso por um plano"
+            }
+           });
+        }
+
+        const deleted = await herbModel.findByIdAndDelete(id);
+        if(!deleted) return res.status(404).send();
+
+        return res.status(200).send();
     }
     catch
     {

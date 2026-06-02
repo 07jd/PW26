@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./util/db.js";
+import { runBackgroundJob } from "./util/runner.js";
 
 // Load variables from .env
 function validate_variables() {
@@ -67,6 +68,9 @@ await registerRoutes();
 app.use((_, res) => {
   res.status(404).send("404 not found");
 });
+
+// Run background job each 5m 
+runBackgroundJob();
 
 const SERVER_PORT = process.env.PORT;
 app.listen(SERVER_PORT, () => {
