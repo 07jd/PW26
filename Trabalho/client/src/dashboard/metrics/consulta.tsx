@@ -2,6 +2,7 @@ import { Button, Card, Form, InputNumber, message, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useState } from "react";
 import { getNewTokenIfExpired } from "../../util";
+import dayjs from "dayjs";
 
 interface tableData {
   id: string;
@@ -111,6 +112,7 @@ export function Consulta() {
       title: "Tempo de Captura",
       dataIndex: "time",
       key: "time",
+      render: (value: string) => dayjs(value).format("DD/MM/YYYY HH:mm"),
     },
     {
       title: "Apagar",

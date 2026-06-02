@@ -104,6 +104,10 @@ export function SideMenu({
           key: "lote-consultar",
           label: "Consultar",
         },
+        {
+          key: "lote-tarefas",
+          label: "Tarefas",
+        },
         ...(role.toLowerCase() === "administrador" ||
         role.toLowerCase() === "responsável"
           ? [

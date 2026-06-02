@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { Consulta } from "./consulta";
 import { Adicionar } from "./adicionar";
 import { Atualizar } from "./atualizar";
+import { Tarefas } from "./tarefas";
 
 export function Lote() {
   const { modo } = useParams();
@@ -10,6 +11,7 @@ export function Lote() {
     if (modo === "consultar") return <Consulta />;
     if (modo === "adicionar") return <Adicionar />;
     if (modo === "atualizar") return <Atualizar />;
+    if (modo === "tarefas") return <Tarefas />;
 
     return <></>;
   };

@@ -6,6 +6,7 @@ import { ReloadOutlined } from "@ant-design/icons";
 import Search from "antd/es/input/Search";
 import type { ColumnsType } from "antd/es/table";
 import { getNewTokenIfExpired } from "../../util";
+import dayjs from "dayjs";
 
 // Data for the table
 interface tableData {
@@ -98,6 +99,7 @@ export function Consulta() {
       title: "Data de Criação",
       dataIndex: "createdAt",
       key: "createdAt",
+      render: (value: string) => dayjs(value).format("DD/MM/YYYY HH:mm"),
     },
     {
       title: "Mais Detalhes",
@@ -141,7 +143,7 @@ export function Consulta() {
             </Descriptions.Item>
 
             <Descriptions.Item label="Criado em">
-              {new Date(popupData.createdAt).toLocaleString()}
+              {dayjs(popupData.createdAt).format("DD/MM/YYYY HH:mm")}
             </Descriptions.Item>
 
             <Descriptions.Item label="Criado por">
@@ -150,7 +152,7 @@ export function Consulta() {
 
             <Descriptions.Item label="Atualizado em">
               {popupData.updatedAt
-                ? new Date(popupData.updatedAt).toLocaleString()
+                ? dayjs(popupData.updatedAt).format("DD/MM/YYYY HH:mm")
                 : "-"}
             </Descriptions.Item>
 

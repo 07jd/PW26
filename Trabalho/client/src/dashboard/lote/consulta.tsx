@@ -6,6 +6,7 @@ import { ReloadOutlined } from "@ant-design/icons";
 import Search from "antd/es/input/Search";
 import type { ColumnsType } from "antd/es/table";
 import { getNewTokenIfExpired } from "../../util";
+import dayjs from "dayjs";
 
 interface tableData {
   num: number;
@@ -122,13 +123,14 @@ export function Consulta() {
       title: "Data de início",
       dataIndex: "start",
       key: "start",
+      render: (value: string) => dayjs(value).format("DD/MM/YYYY HH:mm"),
     },
     {
       title: "Data de Fim",
       dataIndex: "end",
       key: "start",
       render: (value: string) => {
-        return value ? value : "DNF";
+        return value ? dayjs(value).format("DD/MM/YYYY HH:mm") : "DNF";
       },
     },
     {
@@ -193,11 +195,12 @@ export function Consulta() {
             </div>
 
             <div>
-              <b>Início:</b> {popupData.start}
+              <b>Início:</b> {dayjs(popupData.start).format("DD/MM/YYYY HH:mm")}
             </div>
 
             <div>
-              <b>Fim:</b> {popupData.end ?? "DNF"}
+              <b>Fim:</b>{" "}
+              {dayjs(popupData.end).format("DD/MM/YYYY HH:mm") ?? "DNF"}
             </div>
 
             {popupData.observations && (
