@@ -72,6 +72,7 @@ router.post("/:lote", authMiddleware, async(req,res) => {
         }
 
         await metricModel.create(data);
+        if (lote.plans.length === 0) return res.status(200).send();
 
         // Check if already taken action in prev 30m
         if(lote.operationMode === "auto")
@@ -99,7 +100,7 @@ router.post("/:lote", authMiddleware, async(req,res) => {
             // if so dont create more alerts until passed 30m
             const latest_alert = await alertModel.findOne({
                 description: {
-                    $regex: `^\\[Lote ${lote.num}\\]`,
+                    $regex: `^\\[Lote: ${lote.num}\\]`,
                     $options: "i"
                 },
                 createdAt: {
@@ -111,20 +112,40 @@ router.post("/:lote", authMiddleware, async(req,res) => {
         }
 
         // Take action if values outside of planned
-        const getRange = (plans, minKey, maxKey) => {
+        const getRanges = (plans) => {
+            const tempValues = [];
+            const lumValues = [];
+            const humValues = [];
+            
+            for(const plan of plans)
+            {
+                tempValues.push(plan.temperature.max);
+                tempValues.push(plan.temperature.min);
+                lumValues.push(plan.luminosity.max);
+                lumValues.push(plan.luminosity.min);
+                humValues.push(plan.humidity.max);
+                humValues.push(plan.humidity.min);
+            }
+
           return {
-            min: Math.min(...plans.map(p => p[minKey])),
-            max: Math.max(...plans.map(p => p[maxKey]))
-          };
+            temperature: {
+                min: Math.min.apply(Math, tempValues),
+                max: Math.max.apply(Math, tempValues),
+            },
+            humidity: {
+                min: Math.min.apply(Math, humValues),
+                max: Math.max.apply(Math, humValues),
+            },
+            luminosity: {
+                min: Math.min.apply(Math, lumValues),
+                max: Math.max.apply(Math, lumValues),
+            }
+        };
         };
 
-        const ranges = {
-          temperature: getRange(lote.plans, "temperatureMin", "temperatureMax"),
-          humidity: getRange(lote.plans, "humidityMin", "humidityMax"),
-          luminosity: getRange(lote.plans, "luminosityMin", "luminosityMax")
-        };
-
+        
         // Sensor data
+        const ranges = getRanges(lote.plans);
         const temp = data.temperature;
         const hum = data.humidity;
         const lux = data.luminosity;
@@ -132,7 +153,7 @@ router.post("/:lote", authMiddleware, async(req,res) => {
         const possible_task = {
             lote: lote._id,
             type: "",
-            state: concluido,
+            state: "concluido",
             scheduledFor: new Date(),
             doneAt: new Date(),
         };
@@ -174,7 +195,7 @@ router.post("/:lote", authMiddleware, async(req,res) => {
         {
             if(lote.operationMode === "manual")
             {
-                possible_alert.description = `[Lote: ${lote.num}] Luminosidade fora do range desejado (${ranges.temperature.min}-${ranges.temperature.max} LUX)`;
+                possible_alert.description = `[Lote: ${lote.num}] Luminosidade fora do range desejado (${ranges.luminosity.min}-${ranges.luminosity.max} LUX)`;
                 await alertModel.create(possible_alert);
             }
             else
