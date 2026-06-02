@@ -18,6 +18,10 @@ const alertSchema = new mongoose.Schema({
         default: ["Técnico", "Responsável", "Administrador"],
         required: true
     },
+    description: {
+        type: String,
+        trim: true
+    },
     status: {
         type: String,
         enum: {

@@ -10,7 +10,7 @@ const taskSchema = new mongoose.Schema({
         type: String,
         required: [true, "Forneça o tipo da tarefa"],
         enum: {
-            values: ["rega", "fertilizacao", "colheita", "monitorizacao"],
+            values: ["rega", "fertilizacao", "colheita", "monitorizacao", "ventilar", "controlo_luz"],
             message: "Tipo inválido"
         }
     },
