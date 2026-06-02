@@ -5,6 +5,7 @@ import {
   Form,
   Input,
   message,
+  Modal,
   Select,
   type UploadProps,
 } from "antd";
@@ -87,6 +88,21 @@ export function Adicionar() {
     }
   };
 
+  const [errorModal, setErrorModal] = useState<string | null>("");
+
+  const renderPopup = () => {
+    return (
+      <Modal
+        open={!!errorModal}
+        onOk={() => setErrorModal(null)}
+        onCancel={() => setErrorModal(null)}
+        title="Erro"
+      >
+        {errorModal}
+      </Modal>
+    );
+  };
+
   const renderCard = () => {
     if (modeManual) {
       return (
@@ -163,32 +179,43 @@ export function Adicionar() {
         accept: ".csv",
         multiple: false,
         action: upload_endpoint,
+        beforeUpload: () => {
+          getNewTokenIfExpired();
+        },
         onChange(info) {
           const { status } = info.file;
-          if (status !== "uploading") {
-            console.log(info.file, info.fileList);
-          }
+          if (status === "uploading") return;
 
           if (status === "done") {
             messageApi.success(
               `"${info.file.name}" Ficheiro processado com sucesso.`,
             );
           } else if (status === "error") {
-            messageApi.error(`"${info.file.name}" Erro ao processar ficheiro.`);
+            const response = info.file.response;
+            setErrorModal(response.errors.file);
+
+            // No error msg sent by the server
+            if (!response)
+              messageApi.error(
+                `"${info.file.name}" Erro ao processar ficheiro.`,
+              );
           }
         },
       };
 
       return (
-        <Dragger {...props}>
-          <p className="ant-upload-drag-icon">
-            <InboxOutlined />
-          </p>
-          <p className="ant-upload-text">
-            Clique ou arraste um ficheiro para aqui
-          </p>
-          <p className="ant-upload-hint">Apenas ficheiros .csv</p>
-        </Dragger>
+        <>
+          {renderPopup()}
+          <Dragger {...props}>
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">
+              Clique ou arraste um ficheiro para aqui
+            </p>
+            <p className="ant-upload-hint">Apenas ficheiros .csv</p>
+          </Dragger>
+        </>
       );
     }
   };

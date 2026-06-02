@@ -1,7 +1,6 @@
 import { Router } from "express"
 import multer from "multer"
-import fs from "fs"
-import csv from "csv-parser"
+import { parse } from "csv-parse/sync"
 import authMiddleware from "../middleware/authMiddlewares.js"
 import herbModel from "../models/herb.js"
 import { errorToJson } from "../util/db.js"
@@ -11,7 +10,19 @@ const route_name = "/herb";
 const router = Router();
 export { route_name, router };
 
-const upload = multer({ dest: "uploads/" });
+const upload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 10*(1024*1024), // 10mb
+        files: 1,
+    },
+    fileFilter: (_req, f, cb) => {
+        if(!f.mimetype.includes("csv") || !f.originalname.toLowerCase().endsWith(".csv")) 
+            return cb(new Error("Non csv file"));
+
+        cb(null, true);
+    }
+});
 
 // Create herb
 router.post("/", authMiddleware, async (req,res) => {
@@ -32,23 +43,93 @@ router.post("/", authMiddleware, async (req,res) => {
 
 // Create a batch of herbs from a csv file
 router.post("/upload", authMiddleware, upload.single("file"), async (req,res) => {
-    // TODO: Parse
-    if(!req.file || !req.file.path) return res.status(400).send();
-    
-    const path = req.file.path;
-    const user_id = req.user.id;
-    console.log(req.file);
+    const file = req.file;
+    if(!file) return res.status(400).json({
+        type: "validation",
+        errors: {
+            file: "Nenhum ficheiro csv válido"
+        }
+    });
+
+
+    let parsed = [];
     try
     {
-        // TODO: Parsing
-        fs.unlinkSync(path);
-        res.status(400).send();
+        const content = req.file.buffer.toString();
+        parsed = parse(content, {
+            columns: true,
+            skip_empty_lines: true,
+            trim: true
+        });
     }
     catch(e)
     {
-        console.log(e);
+        return res.status(400).json({
+            type: "validation",
+            errors: {
+                file: "Ficheiro csv inválido"
+            }
+        })
+    }
+
+    if(parsed.length === 0) return res.status(400).json({
+        type: "validation",
+        errors: {
+            file: "Ficheiro vazio"
+        }
+    });
+    
+    // Validate
+    let valid_csv = true;
+    const user_id = req.user.id;
+    let line_error = 1;
+
+    const new_names = parsed.map(v => v.name);
+    const dupped = await herbModel.find({ name: { $in: new_names } });
+
+    if(dupped.length !== 0) return res.status(400).json({
+        type: "validation",
+        errors: {
+            file: `Existem nomes duplicados: [${dupped.map(e => e.name)}]` 
+        }
+    })
+
+    try
+    {
+        for(const v of parsed)
+        {
+            v.createdBy = user_id;
+            const new_herb = new herbModel(v);
+            await new_herb.validate();
+            line_error += 1;
+        }
+    } catch(e) {
+        valid_csv = false 
+    }
+
+    if(!valid_csv) return res.status(400).json({
+        type: "validation",
+        errors: {
+            file: `A linha ${line_error} contem data inválida`
+        }
+    });
+
+    // Create
+    try
+    {
+        for(const v of parsed)
+        {
+            v.createdBy = user_id;
+            await herbModel.create(v);
+        }
+    }
+    catch
+    {
         return res.status(500).send();
     }
+
+
+    return res.status(200).send();
 })
 
 // Change herb parameters via id
