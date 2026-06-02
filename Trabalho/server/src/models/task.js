@@ -22,7 +22,10 @@ const taskSchema = new mongoose.Schema({
         },
         default: "pendente"
     },
-    scheduledFor: Date,
+    scheduledFor: {
+        type: Date,
+        default: () => new Date(Date.now() + (3*3600 + 1000))
+    },
     doneAt: Date,
     doneBy: {
         type: mongoose.Types.ObjectId,

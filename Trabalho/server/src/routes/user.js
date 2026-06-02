@@ -231,7 +231,6 @@ router.post("/refresh", async (req,res) => {
     }
     catch(e)
     {
-        console.log("[POST /user/refresh] Error: " + e);
         res.status(500).send();
     }
 })

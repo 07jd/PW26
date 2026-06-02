@@ -24,12 +24,16 @@ const loteSchema = new mongoose.Schema({
         ref: "herb",
         required: [true, "Forneça a erva associada a este lote"]
     },
-    plans: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "plan" 
-        }
-    ],
+    plans: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "plan",
+        default: []
+    },
+    tasks: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "task",
+        default: [] 
+    },
     quantityPlanted: {
         type: Number,
         min: [0, "Quantidade plantada dever ser >=0"],
