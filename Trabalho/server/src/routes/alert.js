@@ -70,7 +70,7 @@ router.post("/:id", authMiddleware, async (req,res) => {
         const id = req.params.id;
         if(!mongoose.isValidObjectId(id)) return res.status(400).send();
         
-        const alert = await alertModel.findOneById(id);
+        const alert = await alertModel.findById(id);
         if(!alert) return res.status(404).send();
         if(!alert.roles.includes(req.user.role)) return res.status(403).send();
 
@@ -103,14 +103,14 @@ router.post("/:id", authMiddleware, async (req,res) => {
 
         const data = {
             status: raw.status,
-            resolvedBy: req.user.role,
+            resolvedBy: req.user.id,
         };
 
         if(raw.status === "ignorado") data.ignoreReason = raw.ignoreReason;
 
 
         Object.assign(alert, data);
-        await data.save();
+        await alert.save();
 
         return res.status(200).send();
     }
