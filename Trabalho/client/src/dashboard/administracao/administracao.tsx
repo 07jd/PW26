@@ -1,12 +1,13 @@
 import { useParams } from "react-router-dom";
 import { Utilizadores } from "./utilizadores";
+import { Logs } from "./logs";
 
 export function Administracao() {
   const { modo } = useParams();
 
   const renderPage = () => {
     if (modo === "utilizadores") return <Utilizadores />;
-    return <> </>;
+    return <Logs />;
   };
 
   return (

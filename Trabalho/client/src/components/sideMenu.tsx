@@ -35,6 +35,10 @@ export function SideMenu({
                 key: "admin-utilizadores",
                 label: "Utilizadores",
               },
+              {
+                key: "admin-logs",
+                label: "Logs",
+              },
             ],
           },
         ]

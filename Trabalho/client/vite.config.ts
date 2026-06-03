@@ -37,6 +37,21 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      "/stats": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        secure: false,
+      },
+      "/alert": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        secure: false,
+      },
+      "/logs": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        secure: false,
+      },
       "/user/session": {
         target: "http://localhost:8080",
         changeOrigin: true,

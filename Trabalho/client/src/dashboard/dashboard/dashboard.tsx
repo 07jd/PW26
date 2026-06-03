@@ -74,7 +74,10 @@ export function DashboardInterface() {
 
   const resolveAlert = async (id: string) => {
     await authFetch(ALERT_ENDPOINT(id), {
-      method: "POST",
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ status: "resolvido" }),
     });
 
@@ -93,10 +96,13 @@ export function DashboardInterface() {
     if (!selectedAlert) return;
 
     await authFetch(ALERT_ENDPOINT(selectedAlert.id), {
-      method: "POST",
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         status: "ignorado",
-        reason: values.reason,
+        ignoreReason: values.reason,
       }),
     });
 
