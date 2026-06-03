@@ -65,7 +65,7 @@ router.get("/all", authMiddleware, adminPage, async (_req, res) => {
 })
 
 // Change status of an alert
-router.post("/:id", authMiddleware, async (req,res) => {
+router.patch("/:id", authMiddleware, async (req,res) => {
     try
     {
         const id = req.params.id;
