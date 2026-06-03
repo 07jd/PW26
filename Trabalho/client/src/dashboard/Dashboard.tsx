@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { getNewTokenIfExpired } from "../util";
 import LoadingSpin from "../components/loadingSpin";
 import { Conta } from "./conta/conta";
+import { DashboardInterface } from "./dashboard/dashboard";
 
 interface User {
   username: string;
@@ -105,6 +106,7 @@ export default function App() {
         }}
       >
         <Routes>
+          <Route path="/dashboard/" element={<DashboardInterface />} />
           <Route path="/dashboard/account" element={<Conta />} />
           <Route path="/dashboard/admin/:modo" element={<Administracao />} />
           <Route path="/dashboard/erva/:modo" element={<Erva />} />

@@ -151,6 +151,37 @@ export function Consulta() {
     },
   ];
 
+  const deleteLote = async (num: number) => {
+    try {
+      await getNewTokenIfExpired();
+      const response = await fetch(`/lote/${num}`, {
+        method: "DELETE",
+      });
+
+      if (response.status === 403) {
+        messageApi.open({
+          type: "error",
+          content: "Não tem permissão para apagar o lote",
+        });
+        return;
+      }
+
+      if (!response.ok) throw new Error();
+
+      messageApi.open({
+        type: "success",
+        content: "Lote apagado",
+      });
+      setPopup(false);
+      await getData(messageApi, setLoadingPage, setData, setFiltered);
+    } catch {
+      messageApi.open({
+        type: "error",
+        content: "Não foi possível apagar o lote",
+      });
+    }
+  };
+
   const renderPopup = () => {
     return (
       <Modal
@@ -158,6 +189,17 @@ export function Consulta() {
         closable={false}
         title="Detalhes"
         footer={[
+          <Button
+            key={"delete"}
+            type="primary"
+            danger
+            onClick={() => {
+              if (popupData?.num) deleteLote(popupData.num);
+              else setPopup(false);
+            }}
+          >
+            Apagar
+          </Button>,
           <Button key={"ok"} type="primary" onClick={() => setPopup(false)}>
             Ok
           </Button>,

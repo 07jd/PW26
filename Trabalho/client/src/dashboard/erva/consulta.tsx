@@ -119,12 +119,53 @@ export function Consulta() {
     },
   ];
 
+  const deleteHerb = async (id: string) => {
+    try {
+      getNewTokenIfExpired();
+      const response = await fetch(`/herb/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.status === 403) {
+        messageApi.open({
+          type: "error",
+          content: "Não tens permissão para apagar a erva",
+        });
+        return;
+      }
+
+      if (!response.ok) throw new Error();
+
+      messageApi.open({
+        type: "success",
+        content: "Erva apagada",
+      });
+      setPopup(false);
+    } catch {
+      messageApi.open({
+        type: "error",
+        content: "Não foi possível eliminar a erva",
+      });
+    }
+  };
+
   const renderPopup = () => {
     return (
       <Modal
         open={popup}
         title="Detalhes"
         footer={[
+          <Button
+            key={"delete"}
+            type="primary"
+            danger
+            onClick={() => {
+              if (popupData?.id) deleteHerb(popupData.id);
+              else setPopup(false);
+            }}
+          >
+            Apagar
+          </Button>,
           <Button key={"ok"} type="primary" onClick={() => setPopup(false)}>
             Ok
           </Button>,

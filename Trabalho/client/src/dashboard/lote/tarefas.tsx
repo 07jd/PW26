@@ -426,6 +426,14 @@ export function Tarefas() {
                     label: "Monitorização",
                     value: "monitorizacao",
                   },
+                  {
+                    label: "Ventilação",
+                    value: "ventilar",
+                  },
+                  {
+                    label: "Alterar exposição (luz)",
+                    value: "controlo_luz",
+                  },
                 ]}
               />
             </Form.Item>
@@ -495,6 +503,14 @@ export function Tarefas() {
                 {
                   label: "Monitorização",
                   value: "monitorizacao",
+                },
+                {
+                  label: "Ventilação",
+                  value: "ventilar",
+                },
+                {
+                  label: "Alterar exposição (luz)",
+                  value: "controlo_luz",
                 },
               ]}
             />

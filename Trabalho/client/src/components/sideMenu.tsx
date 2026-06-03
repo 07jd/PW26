@@ -59,10 +59,6 @@ export function SideMenu({
                 key: "erva-atualizar",
                 label: "Atualizar",
               },
-              {
-                key: "erva-remover",
-                label: "Remover",
-              },
             ]
           : []),
       ],
@@ -86,10 +82,6 @@ export function SideMenu({
               {
                 key: "planos-atualizar",
                 label: "Atualizar",
-              },
-              {
-                key: "planos-remover",
-                label: "Remover",
               },
             ]
           : []),
@@ -118,10 +110,6 @@ export function SideMenu({
               {
                 key: "lote-atualizar",
                 label: "Atualizar",
-              },
-              {
-                key: "lote-remover",
-                label: "Remover",
               },
             ]
           : []),
