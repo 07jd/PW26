@@ -6,6 +6,7 @@ import { errorToJson } from "../util/db.js"
 import { supervisorPage } from "../middleware/roleMiddlewares.js"
 import authMiddleware from "../middleware/authMiddlewares.js";
 import mongoose from "mongoose"
+import logModel from "../models/log.js"
 
 const route_name = "/plan";
 const router = Router();
@@ -85,6 +86,12 @@ router.post("/:type", authMiddleware, supervisorPage, async (req,res) => {
         else
             await pontualPlan.create(data);
 
+        // Log action
+        await logModel.create({
+            user: req.user.id,
+            description: `[Plan] Plano criado`
+        })
+        
         return res.status(200).send();
     }
     catch(e)
@@ -140,6 +147,12 @@ router.patch("/:id", authMiddleware, supervisorPage, async (req,res) => {
         Object.assign(plan, data);
         await plan.save();
 
+        // Log action
+        await logModel.create({
+            user: req.user.id,
+            description: `[Plan] Plano (${plan.name}) atualizado`
+        })
+
         return res.status(200).send();
     }
     catch(e)
@@ -170,6 +183,12 @@ router.delete("/:id", authMiddleware, supervisorPage, async (req,res) => {
 
         const deleted = await planModel.findByIdAndDelete(plan._id);
         if(!deleted) return res.status(500).send();
+
+        // Log action
+        await logModel.create({
+            user: req.user.id,
+            description: `[Plan] Plano (${deleted.name}) apagado`
+        })
 
         return res.status(200).send();
     }

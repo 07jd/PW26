@@ -7,6 +7,7 @@ import herbModel from "../models/herb.js"
 import planModel from "../models/plan.js"
 import { errorToJson } from "../util/db.js"
 import mongoose from "mongoose"
+import logModel from "../models/log.js"
 
 const route_name = "/herb";
 const router = Router();
@@ -37,6 +38,12 @@ router.post("/", authMiddleware, async (req,res) => {
         data.updatedBy = req.user.id;
         console.log(data);
         await herbModel.create(data);
+
+        // Log action
+        await logModel.create({
+            user: req.user.id,
+            description: `[Herb] Erva criada (modo manual)`
+        })
 
         res.status(200).send();
     }
@@ -131,6 +138,12 @@ router.post("/upload", authMiddleware, upload.single("file"), async (req,res) =>
     }
 
 
+    // Log action
+    await logModel.create({
+        user: req.user.id,
+        description: `[Herb] Batch de ervas criada (via csv)`
+    })
+
     return res.status(200).send();
 })
 
@@ -153,6 +166,13 @@ router.patch("/:id", authMiddleware, async (req,res) => {
         );
 
         if (!herb) return res.status(404).send();
+
+        // Log action
+        await logModel.create({
+            user: req.user.id,
+            description: `[Herb] Erva (${herb.name}) modificada`
+        })
+
         res.status(200).send();
     }
     catch(e)
@@ -239,6 +259,12 @@ router.delete("/:id", authMiddleware, async (req, res) => {
 
         const deleted = await herbModel.findByIdAndDelete(id);
         if(!deleted) return res.status(404).send();
+
+        // Log action
+        await logModel.create({
+            user: req.user.id,
+            description: `[Herb] Erva (${deleted.name}) apagada`
+        })
 
         return res.status(200).send();
     }

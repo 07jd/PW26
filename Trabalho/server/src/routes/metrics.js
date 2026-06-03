@@ -6,6 +6,7 @@ import metricModel from "../models/metric.js"
 import mongoose from "mongoose";
 import alertModel from "../models/alerts.js";
 import taskModel from "../models/task.js";
+import logModel from "../models/log.js";
 
 const route_name = "/metrics";
 const router = Router();
@@ -72,6 +73,13 @@ router.post("/:lote", authMiddleware, async(req,res) => {
         }
 
         await metricModel.create(data);
+        
+        // Log action
+        await logModel.create({
+            user: req.user.id,
+            description: `[Metrics] Métrica criada (lote:${lote_num})`
+        })
+
         if (lote.plans.length === 0) return res.status(200).send();
 
         // Check if already taken action in prev 30m
@@ -249,6 +257,12 @@ router.delete("/:id", authMiddleware, async (req,res) => {
 
         const deleted = await metricModel.findByIdAndDelete(id);
         if(!deleted) return res.status(404).send();
+
+        // Log action
+        await logModel.create({
+            user: req.user.id,
+            description: `[Metrics] Métrica (${deleted._id}) apagada`
+        })
 
         return res.status(200).send();
     }

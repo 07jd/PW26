@@ -7,6 +7,7 @@ import { supervisorPage } from "../middleware/roleMiddlewares.js";
 import { errorToJson } from "../util/db.js";
 import mongoose from "mongoose";
 import planModel from "../models/plan.js";
+import logModel from "../models/log.js";
 
 const route_name = "/lote";
 const router = Router();
@@ -146,6 +147,13 @@ router.post("/", authMiddleware, supervisorPage, async (req, res) => {
             return res.status(400).json(msg);
         }
         const lote = await loteModel.create(data);
+
+        // Log action
+        await logModel.create({
+            user: req.user.id,
+            description: `[Lote] Lote (${lote.num}) criado`
+        })
+
         return res.status(200).json(lote);
     }
     catch(e)
@@ -205,6 +213,12 @@ router.patch("/:num", authMiddleware, supervisorPage, async (req, res) => {
         Object.assign(lote, data);
         await lote.save();
 
+        // Log action
+        await logModel.create({
+            user: req.user.id,
+            description: `[Lote] Lote (${lote.num}) alterado`
+        })
+
         return res.status(200).send();
     }
     catch(e)
@@ -225,6 +239,12 @@ router.delete("/:num", authMiddleware, supervisorPage, async (req, res) => {
         if(!deleted) return res.status(404).send();
 
         await metricModel.deleteMany({ lote: deleted._id });
+
+        // Log action
+        await logModel.create({
+            user: req.user.id,
+            description: `[Lote] Lote (${lote.num}) apagado e suas associadas métricas`
+        })
 
         return res.status(200).send();
     }

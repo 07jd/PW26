@@ -4,6 +4,7 @@ import loteModel from "../models/lote.js";
 import mongoose from "mongoose";
 import taskModel from "../models/task.js";
 import { errorToJson } from "../util/db.js";
+import logModel from "../models/log.js";
 
 const route_name = "/task";
 const router = Router();
@@ -59,7 +60,14 @@ router.post("/:lote", authMiddleware, async (req,res) => {
             }
         };
 
-        await taskModel.create(data);
+        const tk = await taskModel.create(data);
+
+        // Log action
+        await logModel.create({
+            user: req.user.id,
+            description: `[Tasks] Tarefa (${tk.type}) criada`
+        })
+
         return res.status(200).send();
     }
     catch(e)
@@ -77,6 +85,12 @@ router.delete("/:id", authMiddleware, async (req, res) => {
 
         const deleted = await taskModel.findByIdAndDelete(id);
         if(!deleted) return res.status(404).send();
+
+        // Log action
+        await logModel.create({
+            user: req.user.id,
+            description: `[Tasks] Tarefa (${deleted.type}) apagada`
+        })
 
         return res.status(200).send();
     }
@@ -123,6 +137,12 @@ router.patch("/:id", authMiddleware, async (req,res) => {
 
         Object.assign(task, data);
         await task.save();
+
+        // Log action
+        await logModel.create({
+            user: req.user.id,
+            description: `[Tasks] Tarefa (${task.type}) modificada`
+        })
 
         return res.status(200).send();
     }

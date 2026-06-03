@@ -5,6 +5,7 @@ import authMiddleware from "../middleware/authMiddlewares.js"
 import { adminPage } from "../middleware/roleMiddlewares.js";
 import { errorToJson } from "../util/db.js"
 import mongoose from "mongoose";
+import logModel from "../models/log.js";
 
 const route_name = "/user";
 const router = Router();
@@ -266,6 +267,13 @@ router.patch("/", authMiddleware, async (req,res) => {
 
         Object.assign(user, data);
         await user.save();
+
+        // Log action
+        await logModel.create({
+            user: req.user.id,
+            description: `[User] Utilizador (${user._id}) atualizado`
+        })
+
         return res.status(200).json(user);
     }
     catch(e)
@@ -291,7 +299,14 @@ router.post("/register", authMiddleware, adminPage, async (req,res) => {
     try
     {
         const input_data = req.body;
-        await userModel.create(input_data);
+        const usr = await userModel.create(input_data);
+        
+        // Log action
+        await logModel.create({
+            user: req.user.id,
+            description: `[User] Utilizador (${usr._id}) criado`
+        })
+
         res.status(200).send();
     }
     catch 
@@ -313,6 +328,12 @@ router.patch("/update/:id", authMiddleware, adminPage, async (req,res) => {
 
         Object.assign(user, data);
         await user.save();
+
+        // Log action
+        await logModel.create({
+            user: req.user.id,
+            description: `[User] Utilizador (${user._id}) atualizado`
+        })
 
         return res.status(200).send();
     }

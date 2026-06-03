@@ -4,6 +4,7 @@ import authMiddleware from "../middleware/authMiddlewares.js"
 import { adminPage } from "../middleware/roleMiddlewares.js";
 import mongoose from "mongoose";
 import { errorToJson } from "../util/db.js";
+import logModel from "../models/log.js";
 
 const route_name = "/alert";
 const router = Router();
@@ -111,6 +112,12 @@ router.post("/:id", authMiddleware, async (req,res) => {
 
         Object.assign(alert, data);
         await alert.save();
+
+        // Log action
+        await logModel.create({
+            user: req.user.id,
+            description: `[Alert] Estado do alerta (${alert._id}) alterado`
+        })
 
         return res.status(200).send();
     }
