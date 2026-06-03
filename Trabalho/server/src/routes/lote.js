@@ -2,6 +2,7 @@ import { Router } from "express"
 import authMiddleware from "../middleware/authMiddlewares.js"
 import loteModel from "../models/lote.js";
 import herbModel from "../models/herb.js"
+import metricModel from "../models/metric.js"
 import { supervisorPage } from "../middleware/roleMiddlewares.js";
 import { errorToJson } from "../util/db.js";
 import mongoose from "mongoose";
@@ -223,7 +224,7 @@ router.delete("/:num", authMiddleware, supervisorPage, async (req, res) => {
         const deleted = await loteModel.findOneAndDelete({ num: lote_num });
         if(!deleted) return res.status(404).send();
 
-        await metricModel.deleteMany({ lote: lote_num });
+        await metricModel.deleteMany({ lote: deleted._id });
 
         return res.status(200).send();
     }

@@ -52,17 +52,17 @@ router.get("/", authMiddleware, async (_, res) => {
             avg_prod /= finished_lotes.length;
         }
 
-        const graph = lotes.map(l => ({
-            num: l.num,
-            productivity: l.productivity,
-        }));
+        //const graph = lotes.map(l => ({
+        //    num: l.num,
+        //    productivity: l.productivity,
+        //}));
 
         return res.status(200).json({
             avgTime: avg_time,
             avgProductivity: avg_prod,
             lateTasks: late_tasks,
             activeLotes: lotes_ativos,
-            graph
+            //graph
         });
     }
     catch

@@ -226,7 +226,7 @@ router.delete("/:id", authMiddleware, async (req, res) => {
         const herb = herbModel.findById(id);
         if(!herb) return res.status(404).send();
 
-        const plans_using_herb = (await planModel.find({ herb: herb._id})).lean();
+        const plans_using_herb = (await planModel.find({ herb: herb._id }));
         if(plans_using_herb.length !== 0)
         {
            return res.status(400).json({
