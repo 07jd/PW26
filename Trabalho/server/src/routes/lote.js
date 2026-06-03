@@ -243,7 +243,7 @@ router.delete("/:num", authMiddleware, supervisorPage, async (req, res) => {
         // Log action
         await logModel.create({
             user: req.user.id,
-            description: `[Lote] Lote (${lote.num}) apagado e suas associadas métricas`
+            description: `[Lote] Lote (${lote_num}) apagado e suas associadas métricas`
         })
 
         return res.status(200).send();
