@@ -120,7 +120,7 @@ export const emergencyPlan = planModel.discriminator("emergencia", new mongoose.
         min: [0, "Dosagem deve ser >= 0"],
     },
     // Itensidade 0-10
-    itensity: {
+    intensity: {
         type: Number,
         required: [true, "Itensidade necessária"],
         min: [0, "Itensidade deve ser >= 0"],

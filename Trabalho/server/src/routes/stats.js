@@ -16,7 +16,7 @@ router.get("/", authMiddleware, async (_, res) => {
         const lotes_ativos = lotes.filter(l => l.state !== "concluido").length;
 
         const late_tasks = tasks.filter(
-            t => Date.now() > new Date(t.scheduledFor).getTime()
+            t =>  t.state !== "concluido" && Date.now() > new Date(t.scheduledFor).getTime()
         ).length;
 
         const finished_tasks = tasks.filter(
@@ -24,18 +24,22 @@ router.get("/", authMiddleware, async (_, res) => {
         );
 
         let avg_time = 0;
-
+        let total_tks = 0;
         if (finished_tasks.length > 0) {
             for (const tk of finished_tasks) {
+                if(!tk.doneAt || !tk.scheduledFor) continue;
+
                 const time =
-                    (new Date(tk.doneAt) -
-                        new Date(tk.createdAt)) /
-                    (1000 * 60);
+                    (
+                        new Date(tk.doneAt).getTime() -
+                        new Date(tk.scheduledFor).getTime()
+                    ) / (1000 * 60);
 
                 avg_time += time;
+                total_tks += 1;
             }
 
-            avg_time /= finished_tasks.length;
+            if(total_tks > 0) avg_time /= total_tks;
         }
 
         const finished_lotes = lotes.filter(

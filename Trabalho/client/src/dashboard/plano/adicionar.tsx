@@ -558,7 +558,10 @@ export function Adicionar() {
                   },
                 ]}
               >
-                <Select disabled={disableFields} showSearch></Select>
+                <Input
+                  disabled={disableFields}
+                  placeholder="joao@gmail.com"
+                ></Input>
               </Form.Item>
               <Form.Item
                 label="Ação"

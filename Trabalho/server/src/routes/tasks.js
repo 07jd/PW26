@@ -110,17 +110,6 @@ router.patch("/:id", authMiddleware, async (req,res) => {
         const task = await taskModel.findById(id);
         if(!task) return res.status(404).send();
 
-        // ScheduledFor no futuro
-        if(data.scheduledFor && new Date(data.scheduledFor) > new Date())
-        {
-            return res.status(400).json({
-                type: "validation",
-                errors: {
-                    scheduledFor: "Data inválida"
-                }
-            });
-        }
-
         // DoneAt no futuro
         if(data.doneAt && new Date(data.doneAt) > new Date())
         {

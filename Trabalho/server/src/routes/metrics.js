@@ -127,6 +127,9 @@ router.post("/:lote", authMiddleware, async(req,res) => {
             
             for(const plan of plans)
             {
+                if(plan.type !== "regular") continue;
+                
+                console.log(plan);
                 tempValues.push(plan.temperature.max);
                 tempValues.push(plan.temperature.min);
                 lumValues.push(plan.luminosity.max);

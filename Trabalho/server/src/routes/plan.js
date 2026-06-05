@@ -2,6 +2,7 @@ import { Router } from "express"
 import planModel, { emergencyPlan, pontualPlan, regularPlan } from "../models/plan.js"
 import herbModel from "../models/herb.js"
 import loteModel from "../models/lote.js"
+import userModel from "../models/user.js"
 import { errorToJson } from "../util/db.js"
 import { supervisorPage } from "../middleware/roleMiddlewares.js"
 import authMiddleware from "../middleware/authMiddlewares.js";
@@ -84,7 +85,27 @@ router.post("/:type", authMiddleware, supervisorPage, async (req,res) => {
         else if (plan_type === "emergencia")
             await emergencyPlan.create(data);
         else
+        {
+            if(!data.approvedBy) return res.status(400).send();
+
+            const user = await userModel.findOne({ email: data.approvedBy });
+            if(!user) return res.status(400).send({
+                type: "validation",
+                errors: {
+                    approvedBy: "Utilizador não existe"
+                }
+            });
+
+            if(user.role === "Técnico") return res.status(400).send({
+                type: "validation",
+                errors: {
+                    approvedBy: "Este utilizador não pode autorizar esta operação"
+                }
+            });
+
+            data.approvedBy = user._id;
             await pontualPlan.create(data);
+        }
 
         // Log action
         await logModel.create({
