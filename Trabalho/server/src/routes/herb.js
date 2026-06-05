@@ -2,7 +2,7 @@ import { Router } from "express"
 import multer from "multer"
 import { parse } from "csv-parse/sync"
 import authMiddleware from "../middleware/authMiddlewares.js"
-//import { supervisorPage } from "../middleware/roleMiddlewares.js"
+import { supervisorPage } from "../middleware/roleMiddlewares.js"
 import herbModel from "../models/herb.js"
 import planModel from "../models/plan.js"
 import { errorToJson } from "../util/db.js"
@@ -28,7 +28,7 @@ const upload = multer({
 });
 
 // Create herb
-router.post("/", authMiddleware, async (req,res) => {
+router.post("/", authMiddleware, supervisorPage, async (req,res) => {
     try
     {
         const data = req.body;
@@ -51,7 +51,7 @@ router.post("/", authMiddleware, async (req,res) => {
 })
 
 // Create a batch of herbs from a csv file
-router.post("/upload", authMiddleware, upload.single("file"), async (req,res) => {
+router.post("/upload", authMiddleware, supervisorPage, upload.single("file"), async (req,res) => {
     const file = req.file;
     if(!file) return res.status(400).json({
         type: "validation",
@@ -148,7 +148,7 @@ router.post("/upload", authMiddleware, upload.single("file"), async (req,res) =>
 })
 
 // Change herb parameters via id
-router.patch("/:id", authMiddleware, async (req,res) => {
+router.patch("/:id", authMiddleware, supervisorPage, async (req,res) => {
     try
     {
         const id = req.params.id;
@@ -182,7 +182,7 @@ router.patch("/:id", authMiddleware, async (req,res) => {
 })
 
 // Get by id
-router.get("/:id", authMiddleware, async (req, res) => {
+router.get("/:id", authMiddleware, supervisorPage, async (req, res) => {
     try
     {
         const herb_id = req.params.id;
@@ -237,7 +237,7 @@ router.get("/", authMiddleware, async (_req,res) => {
     }
 });
 
-router.delete("/:id", authMiddleware, async (req, res) => {
+router.delete("/:id", authMiddleware, supervisorPage, async (req, res) => {
     try
     {
         const id = req.params.id;

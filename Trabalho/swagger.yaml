@@ -1,0 +1,1402 @@
+openapi: 3.0.4
+info:
+  title: Green Herb - OpenAPI 3.0
+  version: 1.0.0
+externalDocs:
+  description: GitHub Repo
+  url: https://github.com/07jd/PW26
+servers:
+  - url: http://localhost:8080/
+tags:
+  - name: user
+    description: Endpoint relacionado a operações sobre utilizadores
+  - name: herb
+    description: Endpoint relacionado a operações sobre ervas
+  - name: plan
+    description: Endpoint relacionado a operações sobre planos
+  - name: lote
+    description: Endpoint relacionado a operações sobre lotes
+  - name: metrics
+    description: Endpoint relacionado a operações sobre metricas
+  - name: task
+    description: Endpoint relacionado a operações sobre tarefas
+  - name: alert
+    description: Endpoint relacionado a operações sobre alertas
+  - name: stats
+    description: Endpoint relacionado a operações sobre stats
+paths:
+  /user/login:
+    post:
+      tags:
+        - user
+      summary: Login user
+      description: Authenticate user with username/email and password.
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: johndoe
+                email:
+                  type: string
+                  example: john@email.com
+                password:
+                  type: string
+                  example: "123456"
+              required:
+                - password
+      responses:
+        '200':
+          description: Login successful
+        '400':
+          description: Validation/Auth error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+
+  /user/logout:
+    post:
+      tags:
+        - user
+      summary: Logout user
+      operationId: logoutUser
+      responses:
+        '200':
+          description: Logout successful
+
+  /user/refresh:
+    post:
+      tags:
+        - user
+      summary: Refresh access token
+      operationId: refreshToken
+      security:
+        - refreshToken: []
+      responses:
+        '200':
+          description: Token refreshed successfully
+        '401':
+          description: Missing refresh token
+        '403':
+          description: Invalid refresh token
+
+  /user/me:
+    get:
+      tags:
+        - user
+      summary: Get current logged user
+      operationId: getCurrentUser
+      security:
+        - accessToken: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserMe'
+        '401':
+          description: Unauthorized
+        '404':
+          description: User not found
+
+  /user:
+    get:
+      tags:
+        - user
+      summary: Get all users (Admin only)
+      operationId: getAllUsers
+      security:
+        - accessToken: []
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserAdminResponse'
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+    patch:
+      tags:
+        - user
+      summary: Update current user
+      operationId: updateCurrentUser
+      security:
+        - accessToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: User updated successfully
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+
+  /user/register:
+    post:
+      tags:
+        - user
+      summary: Register new user (Admin only)
+      operationId: registerUser
+      security:
+        - accessToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User created successfully
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+
+  /user/session:
+    get:
+      tags:
+        - user
+      summary: Check if session is valid
+      operationId: checkSession
+      security:
+        - accessToken: []
+      responses:
+        '200':
+          description: Valid session
+        '401':
+          description: Unauthorized
+
+  /user/{email}:
+    get:
+      tags:
+        - user
+      summary: Get user by email (Admin only)
+      operationId: getUserByEmail
+      security:
+        - accessToken: []
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+          example: cr7@alnassr.com
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAdminResponse'
+        '401':
+          description: Unauthorized
+        '404':
+          description: User not found
+  /user/update/{id}:
+    patch:
+      tags:
+        - user
+      summary: Update user by ID (Admin only)
+      operationId: updateUserById
+      security:
+        - accessToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 6a03ebef990f3504734461ad
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User updated successfully
+        '400':
+          description: Invalid ID
+        '401':
+          description: Unauthorized
+        '404':
+          description: User not found
+  /herb:
+    post:
+      tags:
+        - herb
+      summary: Create herb
+      security:
+        - accessToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HerbCreate'
+      responses:
+        '200':
+          description: Herb created
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+    get:
+      tags:
+        - herb
+      summary: Get all herbs
+      security:
+        - accessToken: []
+      responses:
+        '200':
+          description: List of herbs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Herb'
+        '401':
+          description: Unauthorized
+  /herb/upload:
+    post:
+      tags:
+        - herb
+      summary: Upload herbs via CSV
+      security:
+        - accessToken: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required:
+                - file
+      responses:
+        '200':
+          description: Herbs created
+        '400':
+          description: Validation error (invalid CSV / duplicates / empty file)
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Server error
+  /herb/{id}:
+    get:
+      tags:
+        - herb
+      summary: Get herb by id
+      security:
+        - accessToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Herb found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Herb'
+        '400':
+          description: Invalid id
+        '401':
+          description: Unauthorized
+        '404':
+          description: Herb not found
+    patch:
+      tags:
+        - herb
+      summary: Update herb by id
+      security:
+        - accessToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HerbCreate'
+      responses:
+        '200':
+          description: Herb updated successfully
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+        '404':
+          description: Herb not found
+    delete:
+      tags:
+        - herb
+      summary: Delete herb by id
+      security:
+        - accessToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Herb deleted
+        '404':
+          description: Herb not found
+        '400':
+          description: Herb is in use / invalid id
+  /plan:
+    get:
+      tags: [plan]
+      security:
+        - accessToken: []
+      responses:
+        '200':
+          description: List of plans
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/RegularPlan'
+                    - $ref: '#/components/schemas/EmergencyPlan'
+                    - $ref: '#/components/schemas/PontualPlan'
+  /plan/{type}:
+    post:
+      tags: [plan]
+      security:
+        - accessToken: []
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - regular
+              - emergencia
+              - pontual
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/RegularPlan'
+                - $ref: '#/components/schemas/EmergencyPlan'
+                - $ref: '#/components/schemas/PontualPlan'
+      responses:
+        '200':
+          description: Plan created
+        '400':
+          description: Validation error
+  /plan/{id}:
+    patch:
+      tags: [plan]
+      security:
+        - accessToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Plan updated
+        '404':
+          description: Plan not found
+    delete:
+      tags: [plan]
+      security:
+        - accessToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Plan deleted
+        '404':
+          description: Plan not found
+  /lote/{num}:
+    get:
+      tags: [lote]
+      security:
+        - accessToken: []
+      parameters:
+        - name: num
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lote'
+        '404':
+          description: Lote not found
+    patch:
+      tags: [lote]
+      security:
+        - accessToken: []
+      parameters:
+        - name: num
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoteUpdate'
+      responses:
+        '200':
+          description: Lote atualizado
+        '404':
+          description: Lote não encontrado
+    delete:
+      tags: [lote]
+      security:
+        - accessToken: []
+      parameters:
+        - name: num
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lote removido
+        '404':
+          description: Lote não encontrado
+  /lote:
+    get:
+      tags: [lote]
+      security:
+        - accessToken: []
+      responses:
+        '200':
+          description: Lista de lotes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Lote'
+    post:
+      tags: [lote]
+      security:
+        - accessToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoteCreate'
+      responses:
+        '200':
+          description: Lote created
+        '400':
+          description: Validation Error
+        '403':
+          description: Unauthorized
+  /metrics/{lote}:
+    post:
+      tags: [metrics]
+      summary: Register sensor metrics for a lote
+      security:
+        - accessToken: []
+      parameters:
+        - name: lote
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MetricCreate'
+      responses:
+        '200':
+          description: Metric registered successfully (may trigger tasks/alerts)
+        '400':
+          description: Validation error (invalid sensor data / time)
+        '404':
+          description: Lote not found
+    get:
+      tags: [metrics]
+      summary: Get metrics for a lote
+      security:
+        - accessToken: []
+      parameters:
+        - name: lote
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of metrics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Metric'
+        '400':
+          description: Invalid lote number
+        '404':
+          description: Lote not found
+  /metrics/{id}:
+    delete:
+      tags: [metrics]
+      summary: Delete a metric
+      security:
+        - accessToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Metric deleted successfully
+        '400':
+          description: Invalid id
+        '404':
+          description: Metric not found
+  /task/{lote}:
+    get:
+      tags: [task]
+      summary: Get tasks by lote number
+      security:
+        - accessToken: []
+      parameters:
+        - name: lote
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        '400':
+          description: Invalid lote number
+        '404':
+          description: Lote not found
+    post:
+      tags: [task]
+      summary: Create task for lote
+      security:
+        - accessToken: []
+      parameters:
+        - name: lote
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreate'
+      responses:
+        '200':
+          description: Task created successfully
+        '400':
+          description: Validation error (dates or missing fields)
+        '404':
+          description: Lote not found
+  /task/{id}:
+    patch:
+      tags: [task]
+      summary: Update task by id
+      security:
+        - accessToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdate'
+      responses:
+        '200':
+          description: Task updated successfully
+        '400':
+          description: Invalid input or invalid dates
+        '404':
+          description: Task not found
+    delete:
+      tags: [task]
+      summary: Delete task
+      security:
+        - accessToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task deleted successfully
+        '404':
+          description: Task not found
+  /alert:
+    get:
+      tags: [alert]
+      summary: Get active alerts for user role
+      security:
+        - accessToken: []
+      responses:
+        '200':
+          description: List of active alerts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Alert'
+        '500':
+          description: Server error
+  /alert/everything:
+    get:
+      tags: [alert]
+      summary: Get all alerts for user role
+      security:
+        - accessToken: []
+      responses:
+        '200':
+          description: All alerts for role
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Alert'
+        '500':
+          description: Server error
+  /alert/all:
+    get:
+      tags: [alert]
+      summary: Get all alerts (admin only)
+      security:
+        - accessToken: []
+      responses:
+        '200':
+          description: All alerts in system
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Alert'
+        '403':
+          description: Forbidden (admin only)
+        '500':
+          description: Server error
+  /alert/{id}:
+    patch:
+      tags: [alert]
+      summary: Update alert status
+      security:
+        - accessToken: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlertUpdate'
+      responses:
+        '200':
+          description: Alert updated successfully
+        '400':
+          description: Validation error (invalid status / missing ignoreReason)
+        '403':
+          description: User not allowed to modify this alert
+        '404':
+          description: Alert not found
+  /stats:
+    get:
+      tags: [stats]
+      security:
+        - accessToken: []
+      responses:
+        '200':
+          description: System statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsResponse'
+        '500':
+          description: Server error
+components:
+  schemas:
+    UserMe:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+      required:
+        - username
+        - email
+        - role
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+          format: string
+          example: "ronaldo_cr7"
+        email:
+          type: string
+          example: "ronaldo@alnassr.com"
+        password:
+          type: string
+          example: 'password'
+        role:
+          type: string
+          enum:
+            - "Técnico"
+            - "Responsável"
+            - "Administrador"
+          default: "Técnico"
+      required: 
+        - username
+        - email
+        - password
+    UserAdminResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "6a03ebef990f3504734461ad"
+        username:
+          type: string
+          format: string
+          example: "ronaldo_cr7"
+        email:
+          type: string
+          example: "ronaldo@alnassr.com"
+        role:
+          type: string
+          enum:
+            - "Técnico"
+            - "Responsável"
+            - "Administrador"
+      required: 
+        - username
+        - email
+        - id
+        - role
+    UserRef:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "6a03ebef990f3504734461ad"
+        username:
+          type: string
+          format: string
+          example: "ronaldo_cr7"
+        email:
+          type: string
+          example: "ronaldo@alnassr.com"
+      required: 
+        - id
+        - username
+        - email
+    HerbCreate:
+      type: object
+      properties: 
+        name:
+          type: string
+          example: "Manjericão"
+        description:
+          type: string
+          example: "Muito Utilizado em comidas"
+        category:
+          type: string
+          enum: 
+            - "aromática"
+            - "culinaria"
+            - "medicinal"
+            - "outro"
+          default: "aromática"
+      required:
+        - name
+        - category
+    Herb:
+      type: object
+      properties: 
+        id: 
+          type: string
+          example: "6a06b273d7595b31b50e7450"
+        name:
+          type: string
+          example: "Manjericão"
+        description:
+          type: string
+          example: "Muito Utilizado em comidas"
+        category:
+          type: string
+          enum: 
+            - "aromática"
+            - "culinaria"
+            - "medicinal"
+            - "outro"
+          default: "aromática"
+        createdBy:
+          $ref: '#/components/schemas/UserRef'
+        updatedBy:
+          $ref: '#/components/schemas/UserRef'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - name
+        - description
+        - category
+        - createdBy
+    Plan:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Plano Base Manjericao"
+        herb:
+          type: string
+          example: "6a06b273d7595b31b50e7450"
+        type:
+          type: string
+          enum:
+            - "regular"
+            - "emergencia"
+            - "pontual"
+          default: "regular"
+      required:
+        - name
+        - herb
+        - type
+    RegularPlan:
+      allOf:
+        - $ref: '#/components/schemas/Plan'
+        - type: object
+          properties:
+            temperature:
+              type: object
+              properties:
+                min:
+                  type: number
+                max:
+                  type: number
+              required: [min, max]
+            luminosity:
+              type: object
+              properties:
+                min:
+                  type: number
+                max:
+                  type: number
+              required: [min, max]
+            humidity:
+              type: object
+              properties:
+                min:
+                  type: number
+                max:
+                  type: number
+              required: [min, max]
+            watering:
+              type: number
+            fertilization:
+              type: object
+              properties:
+                frequency:
+                  type: number
+                quantity:
+                  type: number
+            duration:
+              type: number
+          required:
+            - temperature
+            - luminosity
+            - humidity
+            - watering
+            - duration
+    EmergencyPlan:
+      allOf:
+        - $ref: '#/components/schemas/Plan'
+        - type: object
+          properties:
+            reason:
+              type: string
+            minInterval:
+              type: integer
+              minimum: 1
+            dosage:
+              type: number
+            itensity:
+              type: number
+              minimum: 0
+              maximum: 10
+          required:
+            - reason
+            - minInterval
+            - dosage
+            - itensity
+    PontualPlan:
+      allOf:
+        - $ref: '#/components/schemas/Plan'
+        - type: object
+          properties:
+            action:
+              type: string
+            approvedBy:
+              $ref: '#/components/schemas/UserRef'
+            done:
+              type: boolean
+            doneAt:
+              type: string
+              format: date-time
+          required:
+            - action
+            - approvedBy
+    Lote:
+      type: object
+      properties:
+        id:
+          type: string
+        num:
+          type: integer
+          minimum: 0
+          example: 1
+        state:
+          type: string
+          enum:
+            - ativo
+            - comprometido
+            - concluido
+        herb:
+          type: string
+          description: "ObjectId da erva"
+        plans:
+          type: array
+          items:
+            type: string
+          description: "Array de ObjectIds de planos"
+        tasks:
+          type: array
+          items:
+            type: string
+        quantityPlanted:
+          type: number
+        quantityHarvested:
+          type: number
+        quantityLoss:
+          type: number
+        reasonLoss:
+          type: string
+        productivity:
+          type: number
+        operationMode:
+          type: string
+          enum:
+            - auto
+            - manual
+        observations:
+          type: string
+        createdBy:
+          $ref: '#/components/schemas/UserRef'
+        updatedBy:
+          $ref: '#/components/schemas/UserRef'
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+      required:
+        - id
+        - num
+        - state
+        - herb
+        - quantityPlanted
+        - operationMode
+        - createdBy
+        - start
+    LoteCreate:
+      type: object
+      properties:
+        num:
+          type: integer
+          minimum: 0
+        herb:
+          type: string
+        plans:
+          type: array
+          items:
+            type: string
+          default: []
+        quantityPlanted:
+          type: number
+        operationMode:
+          type: string
+          enum:
+            - auto
+            - manual
+          default: auto
+        state:
+          type: string
+          enum:
+            - ativo
+            - comprometido
+            - concluido
+          default: ativo
+        start:
+          type: string
+          format: date-time
+      required:
+        - num
+        - herb
+        - quantityPlanted
+    LoteUpdate:
+      type: object
+      properties:
+        state:
+          type: string
+          enum:
+            - ativo
+            - comprometido
+            - concluido
+        plans:
+          type: array
+          items:
+            type: string
+        tasks:
+          type: array
+          items:
+            type: string
+        quantityHarvested:
+          type: number
+        quantityLoss:
+          type: number
+        reasonLoss:
+          type: string
+        operationMode:
+          type: string
+          enum:
+            - auto
+            - manual
+        observations:
+          type: string
+        end:
+          type: string
+          format: date-time
+    Metric:
+      type: object
+      properties:
+        id:
+          type: string
+        lote:
+          type: string
+        temperature:
+          type: number
+          example: 22.5
+        humidity:
+          type: number
+          example: 60
+        luminosity:
+          type: number
+          example: 800
+        time:
+          type: string
+          format: date-time
+      required:
+        - id
+        - lote
+        - time
+    MetricCreate:
+      type: object
+      properties:
+        temperature:
+          type: number
+        humidity:
+          type: number
+        luminosity:
+          type: number
+        time:
+          type: string
+          format: date-time
+      required:
+        - temperature
+        - humidity
+        - luminosity
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+        lote:
+          type: string
+          description: "ObjectId do lote"
+        type:
+          type: string
+          enum:
+            - rega
+            - fertilizacao
+            - colheita
+            - monitorizacao
+            - ventilar
+            - controlo_luz
+        state:
+          type: string
+          enum:
+            - pendente
+            - concluido
+        scheduledFor:
+          type: string
+          format: date-time
+        doneAt:
+          type: string
+          format: date-time
+        doneBy:
+          $ref: '#/components/schemas/UserRef'
+      required:
+        - id
+        - lote
+        - type
+        - state
+    TaskCreate:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - rega
+            - fertilizacao
+            - colheita
+            - monitorizacao
+            - ventilar
+            - controlo_luz
+        state:
+          type: string
+          enum:
+            - pendente
+            - concluido
+        scheduledFor:
+          type: string
+          format: date-time
+        doneAt:
+          type: string
+          format: date-time
+      required:
+        - type
+        - state
+    TaskUpdate:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - rega
+            - fertilizacao
+            - colheita
+            - monitorizacao
+            - ventilar
+            - controlo_luz
+        state:
+          type: string
+          enum:
+            - pendente
+            - concluido
+        scheduledFor:
+          type: string
+          format: date-time
+        doneAt:
+          type: string
+          format: date-time
+    Alert:
+      type: object
+      properties:
+        id:
+          type: string
+        level:
+          type: string
+          enum:
+            - info
+            - warning
+            - urgent
+        description:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum:
+            - ativo
+            - resolvido
+            - ignorado
+        ignoreReason:
+          type: string
+        resolvedBy:
+          $ref: '#/components/schemas/UserRef'
+        timestamp:
+          type: string
+          format: date-time
+      required:
+        - id
+        - level
+        - description
+        - roles
+        - status
+        - timestamp
+    AlertUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - resolvido
+            - ignorado
+
+        ignoreReason:
+          type: string
+    StatsResponse:
+      type: object
+      properties:
+        avgTime:
+          type: number
+          description: "Tempo médio de conclusão de tasks (minutos)"
+          example: 12.5
+        avgProductivity:
+          type: number
+          description: "Produtividade média dos lotes concluídos (%)"
+          example: 78.3
+        lateTasks:
+          type: integer
+          description: "Número de tasks atrasadas"
+          example: 5
+        activeLotes:
+          type: integer
+          description: "Número de lotes ativos"
+          example: 12
+      required:
+        - avgTime
+        - avgProductivity
+        - lateTasks
+        - activeLotes
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+        errors:
+          type: object
+          additionalProperties: 
+            description: "Field: Error"
+            type: string
+      required:
+        - type
+        - errors
+  securitySchemes:
+    accessToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    refreshToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
